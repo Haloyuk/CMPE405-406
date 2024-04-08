@@ -85,11 +85,32 @@ function RegisterForm() {
                 <div className="input-box">
                     <input type="email" placeholder="E-mail" required />
                 </div>
-                <p>Select your gender: </p>
-                <input type="radio" name="gender" value="male" required />
-                <label for="male">Male </label>
-                <input type="radio" name="gender" value="female" required />
-                <label for="female"> Female</label>
+                <input
+                    type="radio"
+                    name="gender"
+                    value="male"
+                    required
+                    onChange={(e) =>
+                        setInputs({
+                            ...inputs,
+                            gender: e.target.value,
+                        })
+                    }
+                />
+                <label htmlFor="male">Male </label>
+                <input
+                    type="radio"
+                    name="gender"
+                    value="female"
+                    required
+                    onChange={(e) =>
+                        setInputs({
+                            ...inputs,
+                            gender: e.target.value,
+                        })
+                    }
+                />
+                <label htmlFor="female"> Female</label>
                 <br />
                 <br />
 
