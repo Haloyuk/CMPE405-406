@@ -2,24 +2,30 @@ import React from "react";
 import { LuUser2 } from "react-icons/lu";
 import "./RegisterForm.css";
 import { useState } from "react";
+import useRegister from "../../hooks/useRegister";
 
 function RegisterForm() {
     const [inputs, setInputs] = useState({
         fullName: "",
-        username: "",
+        userName: "",
         password: "",
-        confirmedPassword: "",
+        confirmPassword: "",
+        //email: "",
         gender: "",
     });
+
+    const { loading, register } = useRegister();
 
     const handleCheckBoxChange = (gender) => {
         setInputs({ ...inputs, gender });
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(inputs);
+        await register(inputs);
     };
+
+    //console.log(inputs);
 
     return (
         <div className="wrapper">
@@ -45,11 +51,11 @@ function RegisterForm() {
                         type="text"
                         placeholder="Username"
                         required
-                        value={inputs.username}
+                        value={inputs.userName}
                         onChange={(e) =>
                             setInputs({
                                 ...inputs,
-                                username: e.target.value,
+                                userName: e.target.value,
                             })
                         }
                     />
@@ -71,20 +77,18 @@ function RegisterForm() {
                 <div className="input-box">
                     <input
                         type="password"
-                        placeholder="Canfirmed Password"
+                        placeholder="Confirmed Password"
                         required
-                        value={inputs.confirmedPassword}
+                        value={inputs.confirmPassword}
                         onChange={(e) =>
                             setInputs({
                                 ...inputs,
-                                confirmedPassword: e.target.value,
+                                confirmPassword: e.target.value,
                             })
                         }
                     />
                 </div>
-                <div className="input-box">
-                    <input type="email" placeholder="E-mail" required />
-                </div>
+
                 <input
                     type="radio"
                     name="gender"
