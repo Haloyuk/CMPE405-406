@@ -10,7 +10,7 @@ function RegisterForm() {
         userName: "",
         password: "",
         confirmPassword: "",
-        //email: "",
+        email: "",
         gender: "",
     });
 
@@ -84,6 +84,21 @@ function RegisterForm() {
                             setInputs({
                                 ...inputs,
                                 confirmPassword: e.target.value,
+                            })
+                        }
+                    />
+                </div>
+
+                <div className="input-box">
+                    <input
+                        type="email"
+                        placeholder="Email"
+                        required
+                        value={inputs.email}
+                        onChange={(e) =>
+                            setInputs({
+                                ...inputs,
+                                email: e.target.value,
                             })
                         }
                     />

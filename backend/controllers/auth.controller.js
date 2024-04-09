@@ -5,7 +5,7 @@ import { json } from "express";
 
 export const signup = async (req, res) => {
     try {
-        const { fullName, userName, password, confirmPassword, gender } =
+        const { fullName, userName, password, confirmPassword, email, gender } =
             req.body;
 
         if (password !== confirmPassword) {
@@ -31,6 +31,7 @@ export const signup = async (req, res) => {
             fullName,
             userName,
             password: hashedPassword,
+            email,
             gender,
             profilePic: gender === "male" ? boyProfilePic : girlProfilePic,
         });
@@ -44,6 +45,7 @@ export const signup = async (req, res) => {
                 _id: newUser._id,
                 fullName: newUser.fullName,
                 userName: newUser.userName,
+                email: newUser.email,
                 profilePic: newUser.profilePic,
             });
         } else {
@@ -76,6 +78,7 @@ export const login = async (req, res) => {
             _id: user._id,
             fullName: user.fullName,
             userName: user.userName,
+            email: user.email,
             profilePic: user.profilePic,
         });
     } catch (error) {

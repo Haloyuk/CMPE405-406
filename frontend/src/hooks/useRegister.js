@@ -5,21 +5,15 @@ const useRegister = () => {
     const [loading, setLoading] = React.useState(false);
 
     const register = async (inputs) => {
-        const {
-            fullName,
-            userName,
-            password,
-            confirmPassword,
-            //email,
-            gender,
-        } = inputs;
+        const { fullName, userName, password, confirmPassword, email, gender } =
+            inputs;
 
         const success = handleInputErrors(
             fullName,
             userName,
             password,
             confirmPassword,
-            //email,
+            email,
             gender
         );
         if (!success) return;
@@ -37,7 +31,7 @@ const useRegister = () => {
                     userName,
                     password,
                     confirmPassword,
-                    //email,
+                    email,
                     gender,
                 }),
             });
@@ -66,7 +60,7 @@ function handleInputErrors(
     userName,
     password,
     confirmPassword,
-    //email,
+    email,
     gender
 ) {
     if (
@@ -78,8 +72,8 @@ function handleInputErrors(
         password.length === 0 ||
         !confirmPassword ||
         confirmPassword.length === 0 ||
-        //!email ||
-        //email.length === 0 ||
+        !email ||
+        email.length === 0 ||
         !gender ||
         gender.length === 0
     ) {
