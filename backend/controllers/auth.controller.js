@@ -1,12 +1,39 @@
 import bcrypt from "bcryptjs";
+import crypto from "crypto";
 import User from "../models/user.model.js";
 import generateTokenAndSetCookie from "../utils/generateToken.js";
 import { json } from "express";
+
+const algorithm = "aes-256-cbc";
+const secretKey = "vOVH6sdmpNWjRRIqCc7rdxs01lwfr3xx"; // replace with your own secret key
+const iv = crypto.randomBytes(16);
+
+export function encrypt(text) {
+    const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
+    const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
+    return iv.toString("hex") + ":" + encrypted.toString("hex");
+}
+
+function decrypt(text) {
+    let textParts = text.split(":");
+    let iv = Buffer.from(textParts.shift(), "hex");
+    let encryptedText = Buffer.from(textParts.join(":"), "hex");
+    const decipher = crypto.createDecipheriv(algorithm, secretKey, iv);
+    const decrpyted = Buffer.concat([
+        decipher.update(encryptedText),
+        decipher.final(),
+    ]);
+    return decrpyted.toString();
+}
 
 export const signup = async (req, res) => {
     try {
         const { fullName, userName, password, confirmPassword, email, gender } =
             req.body;
+
+        if (!["male", "female"].includes(gender)) {
+            return res.status(400).json({ error: "Invalid gender" });
+        }
 
         if (password !== confirmPassword) {
             return res.status(400).json({ error: "Password don't match" });
@@ -24,14 +51,18 @@ export const signup = async (req, res) => {
 
         //https://avatar.iran.liara.run
 
-        const boyProfilePic = `https://avatar.iran.liara.run/public/boy?username=${userName}`;
-        const girlProfilePic = `https://avatar.iran.liara.run/public/girl?username=${userName}`;
+        const boyProfilePic = `https://avatar.iran.liara.run/public/boy?username=${encrypt(
+            userName
+        )}`;
+        const girlProfilePic = `https://avatar.iran.liara.run/public/girl?username=${encrypt(
+            userName
+        )}`;
 
         const newUser = new User({
-            fullName,
-            userName,
+            fullName: encrypt(fullName),
+            userName: encrypt(userName),
             password: hashedPassword,
-            email,
+            email: encrypt(email),
             gender,
             profilePic: gender === "male" ? boyProfilePic : girlProfilePic,
         });
@@ -43,9 +74,10 @@ export const signup = async (req, res) => {
 
             res.status(201).json({
                 _id: newUser._id,
-                fullName: newUser.fullName,
-                userName: newUser.userName,
-                email: newUser.email,
+                fullName: decrypt(newUser.fullName),
+                userName: decrypt(newUser.userName),
+                email: decrypt(newUser.email),
+                gender,
                 profilePic: newUser.profilePic,
             });
         } else {

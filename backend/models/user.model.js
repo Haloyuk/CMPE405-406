@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { encrypt } from "../controllers/auth.controller.js";
 
 const userSchema = new mongoose.Schema(
     {
@@ -38,6 +39,13 @@ const userSchema = new mongoose.Schema(
     },
     { timestamps: true }
 );
+
+userSchema.pre("save", function (next) {
+    if (this.isModified("gender")) {
+        this.gender = encrypt(this.gender);
+    }
+    next();
+});
 
 const User = mongoose.model("User", userSchema);
 
