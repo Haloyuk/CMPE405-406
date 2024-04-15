@@ -1,8 +1,10 @@
 import React from "react";
 import toast from "react-hot-toast";
+import { useAuthContext } from "../context/AuthContext";
 
 const useRegister = () => {
     const [loading, setLoading] = React.useState(false);
+    const { setAuthUser } = useAuthContext();
 
     const register = async (inputs) => {
         const { fullName, userName, password, confirmPassword, email, gender } =
@@ -36,14 +38,17 @@ const useRegister = () => {
                 }),
             });
 
-            if (res.ok) {
-                const data = await res.json();
-                console.log(data);
-            } else {
-                throw new Error(`HTTP error! status: ${res.status}`);
+            const data = await res.json();
+            if (data.error) {
+                throw new Error(data.error);
             }
+
+            localStorage.setItem("authUser", JSON.stringify(data));
+
+            setAuthUser(data);
+
+            console.log(data);
         } catch (error) {
-            console.error(error.message);
             toast.error(error.message);
         } finally {
             setLoading(false);
