@@ -2,28 +2,31 @@ import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import User from "../models/user.model.js";
 import generateTokenAndSetCookie from "../utils/generateToken.js";
-import { json } from "express";
 
-const algorithm = "aes-256-cbc";
-const secretKey = "vOVH6sdmpNWjRRIqCc7rdxs01lwfr3xx"; // replace with your own secret key
-const iv = crypto.randomBytes(16);
+const secretKey =
+    process.env.SECRET_KEY ||
+    "8c4638fe6e576629090b17c5092ea4bdff2ab931f3f0a646eb6fab388ef05b198c4638fe6e576629090b17c5092ea4bd";
+
+const key = crypto.scryptSync(secretKey, "salt", 32);
+
+const iv = Buffer.alloc(16, 0);
 
 export function encrypt(text) {
-    const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
-    const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
-    return iv.toString("hex") + ":" + encrypted.toString("hex");
+    const cipher = crypto.createCipheriv("aes-256-cbc", key, iv);
+    let encrypted = Buffer.concat([
+        cipher.update(text, "utf8"),
+        cipher.final(),
+    ]);
+    return encrypted.toString("hex");
 }
 
-function decrypt(text) {
-    let textParts = text.split(":");
-    let iv = Buffer.from(textParts.shift(), "hex");
-    let encryptedText = Buffer.from(textParts.join(":"), "hex");
-    const decipher = crypto.createDecipheriv(algorithm, secretKey, iv);
-    const decrpyted = Buffer.concat([
-        decipher.update(encryptedText),
+function decrypt(encrypted) {
+    const decipher = crypto.createDecipheriv("aes-256-cbc", key, iv);
+    let decrypted = Buffer.concat([
+        decipher.update(Buffer.from(encrypted, "hex")),
         decipher.final(),
     ]);
-    return decrpyted.toString();
+    return decrypted.toString("utf8");
 }
 
 export const signup = async (req, res) => {
@@ -36,47 +39,40 @@ export const signup = async (req, res) => {
         }
 
         if (password !== confirmPassword) {
-            return res.status(400).json({ error: "Password don't match" });
+            return res.status(400).json({ error: "Passwords do not match" });
         }
 
-        const user = await User.findOne({ userName });
+        const encryptedUserName = encrypt(userName);
+        const user = await User.findOne({ userName: encryptedUserName });
 
         if (user) {
             return res.status(400).json({ error: "Username already exists" });
         }
 
-        //hash password
-        const salt = await bcrypt.genSalt(10);
+        const salt = await bcrypt.genSalt(12);
         const hashedPassword = await bcrypt.hash(password, salt);
-
-        //https://avatar.iran.liara.run
-
-        const boyProfilePic = `https://avatar.iran.liara.run/public/boy?username=${encrypt(
-            userName
-        )}`;
-        const girlProfilePic = `https://avatar.iran.liara.run/public/girl?username=${encrypt(
-            userName
-        )}`;
 
         const newUser = new User({
             fullName: encrypt(fullName),
-            userName: encrypt(userName),
+            userName: encryptedUserName,
             password: hashedPassword,
             email: encrypt(email),
             gender,
-            profilePic: gender === "male" ? boyProfilePic : girlProfilePic,
+            profilePic:
+                gender === "male"
+                    ? `https://avatar.iran.liara.run/public/boy?username=${encryptedUserName}`
+                    : `https://avatar.iran.liara.run/public/girl?username=${encryptedUserName}`,
         });
 
         if (newUser) {
-            //generate JWT token
             generateTokenAndSetCookie(newUser._id, res);
             await newUser.save();
 
             res.status(201).json({
                 _id: newUser._id,
-                fullName: decrypt(newUser.fullName),
-                userName: decrypt(newUser.userName),
-                email: decrypt(newUser.email),
+                fullName: fullName,
+                userName: userName,
+                email: email,
                 gender,
                 profilePic: newUser.profilePic,
             });
@@ -85,20 +81,28 @@ export const signup = async (req, res) => {
         }
     } catch (error) {
         console.log("Error in signup controller", error.message);
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(500).json({ error: error.message });
     }
 };
 
 export const login = async (req, res) => {
     try {
         const { userName, password } = req.body;
-        const user = await User.findOne({ userName });
-        const isPasswordCorrect = await bcrypt.compare(
-            password,
-            user?.password || ""
-        );
 
-        if (!user || !isPasswordCorrect) {
+        const encryptedUserName = encrypt(userName);
+        const user = await User.findOne({ userName: encryptedUserName });
+
+        if (!user) {
+            console.log(`User not found: ${userName}`);
+            return res
+                .status(400)
+                .json({ error: "Invalid username or password" });
+        }
+
+        const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+        if (!isPasswordCorrect) {
+            console.log(`Password does not match for user: ${userName}`);
             return res
                 .status(400)
                 .json({ error: "Invalid username or password" });
@@ -108,14 +112,14 @@ export const login = async (req, res) => {
 
         res.status(200).json({
             _id: user._id,
-            fullName: user.fullName,
-            userName: user.userName,
-            email: user.email,
+            fullName: decrypt(user.fullName),
+            userName: decrypt(user.userName),
+            email: decrypt(user.email),
             profilePic: user.profilePic,
         });
     } catch (error) {
         console.log("Error in login controller", error.message);
-        res.status(500).json({ error: "Internal Server Error" });
+        res.status(500).json({ error: error.message });
     }
 };
 
@@ -124,7 +128,7 @@ export const logout = async (req, res) => {
         res.cookie("jwt", "", { maxAge: 0 });
         res.status(200).json({ message: "Logged out successfully" });
     } catch (error) {
-        console.log("Error in login controller", error.message);
-        res.status(500).json({ error: "Internal Server Error" });
+        console.log("Error in logout controller", error.message);
+        res.status(500).json({ error: error.message });
     }
 };
