@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-import { encrypt } from "../controllers/auth.controller.js";
+import { encrypt } from "../utils/cryptoUtils.js";
 
 const userSchema = new mongoose.Schema(
     {
