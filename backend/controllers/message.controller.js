@@ -1,5 +1,6 @@
 import Conversation from "../models/conversation.model.js";
 import Message from "../models/message.model.js";
+import { encrypt, decrypt } from "../utils/cryptoUtils.js";
 
 export const sendMessage = async (req, res) => {
     try {
@@ -17,10 +18,12 @@ export const sendMessage = async (req, res) => {
             });
         }
 
+        const encryptedMessage = encrypt(message);
+
         const newMessage = new Message({
             senderId,
             receiverId,
-            message,
+            message: encryptedMessage,
         });
 
         if (newMessage) {
@@ -49,7 +52,12 @@ export const getMessages = async (req, res) => {
 
         if (!conversation) return res.status(200).json([]);
 
-        const messages = conversation.messages;
+        const messages = conversation.messages.map((message) => {
+            return {
+                ...message._doc,
+                message: decrypt(message.message),
+            };
+        });
 
         res.status(200).json(messages);
     } catch (error) {
