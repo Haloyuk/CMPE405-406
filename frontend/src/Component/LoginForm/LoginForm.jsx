@@ -2,20 +2,18 @@ import React, { useState } from "react";
 import { LuUser2 } from "react-icons/lu";
 import { MdLockOutline } from "react-icons/md";
 import "./LoginForm.css";
+import useLogin from "../../hooks/useLogin";
 
 function LoginForm() {
-    const [username, setUsername] = useState("");
+    const [userName, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
 
-    const handleLogin = (event) => {
-        event.preventDefault();
+    const { loading, login } = useLogin();
 
-        if (username === "kullanici" && password === "sifre") {
-            alert("Giriş başarılı!");
-        } else {
-            setError("Kullanıcı adı veya şifre hatalı!");
-        }
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        await login(userName, password);
     };
 
     return (
@@ -27,7 +25,7 @@ function LoginForm() {
                     <input
                         type="text"
                         placeholder="Username"
-                        value={username}
+                        value={userName}
                         onChange={(e) => setUsername(e.target.value)}
                         required
                     />
