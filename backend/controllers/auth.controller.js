@@ -2,6 +2,9 @@ import bcrypt from "bcryptjs";
 import User from "../models/user.model.js";
 import generateTokenAndSetCookie from "../utils/generateToken.js";
 import { decrypt, encrypt, hashUsername } from "../utils/cryptoUtils.js";
+import Token from "../models/token.js";
+import crypto from 'crypto';
+import verifmail from "../utils/verificationmail.js";
 
 export const signup = async (req, res) => {
     try {
@@ -50,6 +53,17 @@ export const signup = async (req, res) => {
                 gender,
                 profilePic: newUser.profilePic,
             });
+               //TOKEN OLUŞTURMA VE KAYDETME İŞLEMİ
+               const token = new Token(
+                {userId: newUser._id, token: crypto.randomBytes(16).toString('hex')
+            });
+            await token.save();
+            console.log(token);
+            //TOKEN OLUŞTURMA VE KAYDETME İŞLEMİ SONU
+            //EMAİL GÖNDERME İŞLEMİ
+            const link = `http://localhost:5000/api/auth/confirm/${token.token}`;
+            await verifmail(email, link);   
+            console.log("Email sent successfully");
         } else {
             res.status(400).json({ error: "Invalid user data" });
         }
@@ -83,7 +97,7 @@ export const login = async (req, res) => {
         }
 
         generateTokenAndSetCookie(user._id, res);
-
+// İS VERİFİED CHECK EDİLECEK..
         res.status(200).json({
             _id: user._id,
             fullName: decrypt(user.fullName),
