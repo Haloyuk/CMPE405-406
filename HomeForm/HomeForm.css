@@ -1,0 +1,105 @@
+/* Home page styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-color: #f2f2f2;
+    font-family: Arial, sans-serif;
+    
+}
+
+.navigation {
+    position: relative;
+    width: 400px;
+    height: 70px;
+    /* background: linear-gradient(45deg,#2196f3,#e91e63); */
+    /*background-color: #000;*/
+    /*background: linear-gradient(0deg, #02025A 0%, #5a0247 47%, #000000 100%);*/
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    background: transparent;
+    backdrop-filter: blur(400px);
+}
+
+.navigation ul {
+    display: flex;
+    width: 350px;
+}
+
+.navigation ul li {
+    position: relative;
+    width: 70px;
+    height: 70px;
+    list-style: none;
+    z-index: 1;
+}
+
+.navigation ul li a {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    text-align: center;
+    font-weight: 500;
+}
+.navigation ul li a .icon {
+    position: relative;
+    display: block;
+    line-height: 75px;
+    font-size: 1.5em;
+    text-align: center;
+    color: white;
+    transition: .3s;
+}
+
+.navigation ul li.active a .icon{
+    transform: translateY(-32px);
+}
+
+.navigation ul li a .text {
+    position: absolute;
+    color: white;
+    font-weight: 400;
+    font-size: .75em;
+    letter-spacing: .05em;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: .3s;
+}
+
+.navigation ul li.active a .text {
+    opacity: 1;
+    transform: translateY(10px);
+}
+
+.indicator {
+    position: absolute;
+    top: -50%;
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(0deg, #02025A 0%, #5a0247 47%, #000000 100%);
+    border: 6px solid #06021b;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+}
+
+.indicator::before {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: yellowgreen;
+}
