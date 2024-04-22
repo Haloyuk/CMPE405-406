@@ -25,7 +25,16 @@ export const signup = async (req, res) => {
         if (user) {
             return res.status(400).json({ error: "Username already exists" });
         }
-
+       //EMAİL KONTROLÜ, BÜTÜN KULLANICILARIN EMAİLLERİNİ DECRYPT EDİP KONTROL ETMEK
+       // Alternatif varsa düşünülmeli, sistemi yorabilir.
+     
+        const users = await User.find();
+        const decryptedEmails = users.map(user => decrypt(user.email));
+        
+        if (decryptedEmails.includes(email)) {
+            return res.status(400).json({ error: "Email already exists" });
+        }
+   
         const salt = await bcrypt.genSalt(12);
         const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -63,7 +72,8 @@ export const signup = async (req, res) => {
             //EMAİL GÖNDERME İŞLEMİ
             const link = `http://localhost:5000/api/auth/confirm/${token.token}`;
             await verifmail(email, link);   
-            console.log("Email sent successfully");
+            console.log("Email verified succsessfully.");
+            // RETURN EDİLECEK PAGE
         } else {
             res.status(400).json({ error: "Invalid user data" });
         }
@@ -95,9 +105,11 @@ export const login = async (req, res) => {
                 .status(400)
                 .json({ error: "Invalid username or password" });
         }
-
+        //EMAİL VERİFİCAİTON TEST
+        if (!user.isVerified) {
+            return console.log("Email is not verified yet.")
+        }
         generateTokenAndSetCookie(user._id, res);
-// İS VERİFİED CHECK EDİLECEK..
         res.status(200).json({
             _id: user._id,
             fullName: decrypt(user.fullName),
@@ -120,3 +132,25 @@ export const logout = async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 };
+
+//POSTMANDE TEST YAPARKEN HIZLICA KULLANICIYI SİLMEK İÇİN
+export const deleteUser = async (req, res) => {
+    try {
+        const { userName } = req.body;
+        const hashedUsername = hashUsername(userName);
+
+        const user = await User.findOne({ userName: hashedUsername });
+
+        if (!user) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        await User.findByIdAndDelete(user._id);
+        await Token.deleteMany({ userId: user._id });
+
+        res.status(200).json({ message: "User deleted successfully" });
+    } catch (error) {   
+        console.log("Error in delete user controller", error.message);
+        res.status(500).json({ error: error.message });
+    }       
+}

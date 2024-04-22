@@ -1,5 +1,5 @@
 import express from "express";
-import { signup, login, logout } from "../controllers/auth.controller.js";
+import { signup, login, logout, deleteUser } from "../controllers/auth.controller.js";
 import Token from "../models/token.js";
 import User from "../models/user.model.js";
 
@@ -20,10 +20,13 @@ async (req, res) => {
         await User.updateOne({ _id: token.userId }, { isVerified: true });
         await Token.findByIdAndDelete(token._id);
         res.send("Email is verified");
+       // YÖNLENDİRME BURADAN GERÇEKLEŞECEK. res.redirect("/")
     } catch (error) {
         res.status(400).send("Invalid token");
     }
 }
 );
+
+router.post("/delete", deleteUser);
 
 export default router;

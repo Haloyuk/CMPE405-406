@@ -1,7 +1,7 @@
 import { Navigate, Routes, Route } from "react-router-dom";
 import "./App.css";
 import LoginForm from "./Component/LoginForm/LoginForm";
-import RegisterForm from "./Component/RegisterForm/RegisterForm";
+import RegisterForm  from "./Component/RegisterForm/RegisterForm";
 import HomeForm from "./Component/HomeForm/HomeForm";
 import { Toaster } from "react-hot-toast";
 import { useAuthContext } from "./context/AuthContext";
