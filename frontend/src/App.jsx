@@ -3,6 +3,9 @@ import "./App.css";
 import LoginForm from "./Component/LoginForm/LoginForm";
 import RegisterForm from "./Component/RegisterForm/RegisterForm";
 import HomeForm from "./Component/HomeForm/HomeForm";
+import ProfilePage from "./Component/ProfilePage/ProfilePage";
+import ChatPage from "./Component/ChatPage/ChatPage";
+import MailVerificationPage from "./Component/MailVerificationPage/MailVerificationPage";
 import { Toaster } from "react-hot-toast";
 import { useAuthContext } from "./context/AuthContext";
 
@@ -23,8 +26,21 @@ function App() {
                 />
                 <Route
                     path="/register"
-                    element={authUser ? <Navigate to="/" /> : <RegisterForm />}
+                    element={authUser ? <Navigate to="/verification" />:<RegisterForm />}
                 />
+                <Route
+                    path="/profile"
+                    element={authUser ? <ProfilePage /> : <Navigate to="/login" /> }
+                />
+                <Route
+                    path="/chat"
+                    element={authUser ? <ChatPage /> : <Navigate to="/login" /> }
+                />
+                <Route
+                    path="/verification"
+                    element={authUser ? <MailVerificationPage /> : <Navigate to="/login" /> }
+                />
+                
             </Routes>
             <Toaster />
         </div>
@@ -32,3 +48,4 @@ function App() {
 }
 
 export default App;
+
