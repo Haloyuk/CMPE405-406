@@ -4,10 +4,12 @@ import { MdLockOutline } from "react-icons/md";
 import "./LoginForm.css";
 import useLogin from "../../hooks/useLogin";
 
+
 function LoginForm() {
     const [userName, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+
 
     const { loading, login } = useLogin();
 
@@ -41,13 +43,10 @@ function LoginForm() {
                     />
                 </div>
                 {error && <div className="error">{error}</div>}
-                <div className="remember-forgot">
-                    <label htmlFor="">
-                        <input type="checkbox" /> Remember me{" "}
-                    </label>
-                    <a href="a">Forgot Password?</a>
+                <div className="remember-forgot" >
+                    <a href="a" >Forgot Password?</a>
                 </div>
-                <button type="submit">Login</button>
+                <button>Login</button>
                 <div className="register-link"></div>
                 <p>
                     Don't have an account? <a href="register">Register</a>
