@@ -3,6 +3,8 @@ import { LuUser2 } from "react-icons/lu";
 import "./RegisterForm.css";
 import { useState } from "react";
 import useRegister from "../../hooks/useRegister";
+import { Link } from "react-router-dom";
+import ProfilePage from "../ProfilePage/ProfilePage";
 
 function RegisterForm() {
     const [inputs, setInputs] = useState({
@@ -25,10 +27,9 @@ function RegisterForm() {
         await register(inputs);
     };
 
-    //console.log(inputs);
 
     return (
-        <div className="wrapper">
+        <div className="wrapper2">
             <form onSubmit={handleSubmit}>
                 <div className="logo"></div>
                 <div className="input-box">
@@ -132,8 +133,8 @@ function RegisterForm() {
                 <label htmlFor="female"> Female</label>
                 <br />
                 <br />
-
-                <button type="submit">Register</button>
+                <a href="profile">
+                <button type="submit">Register</button></a>
             </form>
         </div>
     );

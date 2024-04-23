@@ -7,6 +7,9 @@
     color: rgb(255, 255, 255);
     border-radius: 10px;
     padding: 40px 50px;
+    justify-content: center;
+    align-items: center;
+    margin-left: 0ex;
 }
 
 .wrapper h1{
@@ -54,8 +57,12 @@
 }
 
 .remember-forgot a{
+    position: relative;
+    left: 95px;
     color: white;
     text-decoration: none;
+    justify-content: center;
+    align-items: center;
 }
 
 .remember-forgot a:hover{
