@@ -89,6 +89,7 @@ export const login = async (req, res) => {
             fullName: decrypt(user.fullName),
             userName: userName,
             email: decrypt(user.email),
+            gender: decrypt(user.gender),
             profilePic: user.profilePic,
         });
     } catch (error) {
@@ -105,4 +106,24 @@ export const logout = async (req, res) => {
         console.log("Error in logout controller", error.message);
         res.status(500).json({ error: error.message });
     }
+};
+
+export const getProfile = async (req, res) => {
+    const username = req.params.username;
+    const hashedUsername = hashUsername(username);
+
+    const user = await User.findOne({ userName: hashedUsername });
+
+    if (!user) {
+        return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json({
+        _id: user._id,
+        fullName: decrypt(user.fullName),
+        userName: username,
+        email: decrypt(user.email),
+        gender: decrypt(user.gender),
+        profilePic: user.profilePic,
+    });
 };
