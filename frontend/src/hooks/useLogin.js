@@ -17,12 +17,14 @@ const useLogin = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ userName, password}),
+                body: JSON.stringify({ userName, password }),
             });
+
             const data = await res.json();
             if (data.error) {
                 throw new Error(data.error);
             }
+
             localStorage.setItem("authUser", JSON.stringify(data));
             setAuthUser(data);
         } catch (error) {

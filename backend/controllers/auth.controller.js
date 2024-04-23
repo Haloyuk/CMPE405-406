@@ -107,7 +107,7 @@ export const login = async (req, res) => {
         }
         //EMAİL VERİFİCAİTON TEST
         if (!user.isVerified) {
-            return console.log("Email is not verified yet.")
+             return res.status(400).json({error: "Email is not verified yet."});
         }
         generateTokenAndSetCookie(user._id, res);
         res.status(200).json({

@@ -16,7 +16,7 @@ const verifmail = async (email, link) => {
             text: `WELCOME`,
             html: `<h1>Click on the link below to verify your email</h1><br><a href=${link}>${link}</a>`,
         });
-        console.log("Message sended successfully");
+        console.log("Message sent successfully");
     }catch (error) {
         console.log("Error in sending email", error);
     }

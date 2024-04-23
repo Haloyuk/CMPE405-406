@@ -1,24 +1,20 @@
+import "./ChatPage.css";
 import React from "react";
 import { Link, Route } from "react-router-dom"; // react-router-dom'dan Link componentini içe aktarın
 import useLogout from "../../hooks/useLogout.js";
-import "./HomeForm.css";
+//import "./HomeForm.css";
 import { HiOutlineHome } from "react-icons/hi2";
 import { FiUser } from "react-icons/fi";
 import { BiMessageRoundedDetail } from "react-icons/bi";
 import { MdOutlineAddToPhotos } from "react-icons/md";
 import { MdOutlinePowerSettingsNew } from "react-icons/md";
 
-const HomeForm = () => {
+const ChatPage = () => {
     const { loading, logout } = useLogout();
 
     return (
         <div>
-            <p className="ws">WELCOME TO</p>
-             <img src="Chatcrypt.png" alt="No Data" width="650" height="650"></img>
-             <p> This app was designed as a graduation project by 
-                    2023-2024 academic year spring semester graduates Halil Yüksel,
-                    Buse Alasköz, Ege Barlas and Ahmet Fatih Saruhan.</p>
-                    <p>&#169; All rights reserved 2024 </p>
+
             <div className="navigation">
                 <ul>
                     <li className="list">
@@ -57,4 +53,5 @@ const HomeForm = () => {
     );
 };
 
-export default HomeForm;
+export default ChatPage;
+
