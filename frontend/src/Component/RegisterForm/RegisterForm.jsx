@@ -5,7 +5,7 @@ import { useState } from "react";
 import useRegister from "../../hooks/useRegister";
 import { Link } from "react-router-dom";
 import ProfilePage from "../ProfilePage/ProfilePage";
-
+import { useNavigate } from "react-router-dom";
 function RegisterForm() {
     const [inputs, setInputs] = useState({
         fullName: "",
@@ -15,6 +15,8 @@ function RegisterForm() {
         email: "",
         gender: "",
     });
+
+    const navigate = useNavigate();
 
     const { loading, register } = useRegister();
 

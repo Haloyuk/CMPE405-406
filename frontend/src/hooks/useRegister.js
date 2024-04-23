@@ -7,7 +7,7 @@ const useRegister = () => {
     const { setAuthUser } = useAuthContext();
 
     const register = async (inputs) => {
-        const { fullName, userName, password, confirmPassword, email, gender } =
+        const { fullName, userName, password, confirmPassword, email, gender} =
             inputs;
 
         const success = handleInputErrors(
@@ -35,6 +35,7 @@ const useRegister = () => {
                     confirmPassword,
                     email,
                     gender,
+                    isVerified: false,
                 }),
             });
 
@@ -42,11 +43,6 @@ const useRegister = () => {
             if (data.error) {
                 throw new Error(data.error);
             }
-
-            localStorage.setItem("authUser", JSON.stringify(data));
-
-            setAuthUser(data);
-
             console.log(data);
         } catch (error) {
             toast.error(error.message);

@@ -24,7 +24,6 @@ const useProfileData = () => {
                         },
                     }
                 );
-
                 if (!response.ok) {
                     console.error("Error with fetch:", response.statusText);
                     return;

@@ -48,6 +48,7 @@ export const signup = async (req, res) => {
                 gender === "male"
                     ? `https://avatar.iran.liara.run/public/boy?username=${hashedUsername}`
                     : `https://avatar.iran.liara.run/public/girl?username=${hashedUsername}`,
+            isVerified: false,
         });
 
         if (newUser) {
@@ -61,6 +62,7 @@ export const signup = async (req, res) => {
                 email: email,
                 gender,
                 profilePic: newUser.profilePic,
+                isVerified: false,
             });
                //TOKEN OLUŞTURMA VE KAYDETME İŞLEMİ
                const token = new Token(
@@ -106,9 +108,9 @@ export const login = async (req, res) => {
                 .json({ error: "Invalid username or password" });
         }
         //EMAİL VERİFİCAİTON TEST
-        if (!user.isVerified) {
-             return res.status(400).json({error: "Email is not verified yet."});
-        }
+         if (!user.isVerified) {
+              return res.status(400).json({ error: "Email is not verified" });
+         }
         generateTokenAndSetCookie(user._id, res);
         res.status(200).json({
             _id: user._id,
@@ -116,6 +118,7 @@ export const login = async (req, res) => {
             userName: userName,
             email: decrypt(user.email),
             profilePic: user.profilePic,
+            isVerified: user.isVerified,
         });
     } catch (error) {
         console.log("Error in login controller", error.message);
@@ -153,4 +156,18 @@ export const deleteUser = async (req, res) => {
         console.log("Error in delete user controller", error.message);
         res.status(500).json({ error: error.message });
     }       
+}
+
+export const findUserMail = async (req, res) => {
+    try {
+        const { userName } = req.body;
+        const hashedUsername = hashUsername(userName);
+        const email = decrypt(userName.email);
+        console.log(email)
+        return email;
+    }
+    catch (error) {
+        console.log("Error in find user mail controller", error.message);
+        res.status(500).json({ error: error.message });
+    }
 }
