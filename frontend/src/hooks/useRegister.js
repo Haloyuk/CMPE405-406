@@ -7,7 +7,7 @@ const useRegister = () => {
     const { setAuthUser } = useAuthContext();
 
     const register = async (inputs) => {
-        const { fullName, userName, password, confirmPassword, email, gender} =
+        const { fullName, userName, password, confirmPassword, email, gender } =
             inputs;
 
         const success = handleInputErrors(
@@ -18,7 +18,7 @@ const useRegister = () => {
             email,
             gender
         );
-        if (!success) return;
+        if (!success) return false;
 
         setLoading(true);
 
@@ -43,9 +43,15 @@ const useRegister = () => {
             if (data.error) {
                 throw new Error(data.error);
             }
-            console.log(data);
+
+            localStorage.setItem("authUser", JSON.stringify(data));
+
+            setAuthUser(data);
+
+            return true;
         } catch (error) {
             toast.error(error.message);
+            return false;
         } finally {
             setLoading(false);
         }

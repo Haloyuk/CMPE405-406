@@ -6,6 +6,7 @@ import useRegister from "../../hooks/useRegister";
 import { Link } from "react-router-dom";
 import ProfilePage from "../ProfilePage/ProfilePage";
 import { useNavigate } from "react-router-dom";
+
 function RegisterForm() {
     const [inputs, setInputs] = useState({
         fullName: "",
@@ -26,9 +27,11 @@ function RegisterForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await register(inputs);
+        const registrationIsSuccessful = await register(inputs);
+        if (registrationIsSuccessful) {
+            navigate("/verification");
+        }
     };
-
 
     return (
         <div className="wrapper2">
@@ -136,7 +139,8 @@ function RegisterForm() {
                 <br />
                 <br />
                 <a href="profile">
-                <button type="submit">Register</button></a>
+                    <button type="submit">Register</button>
+                </a>
             </form>
         </div>
     );

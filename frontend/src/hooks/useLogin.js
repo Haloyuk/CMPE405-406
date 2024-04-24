@@ -7,7 +7,7 @@ const useLogin = () => {
     const [loading, setLoading] = useState(false);
     const { setAuthUser } = useAuthContext();
     const navigate = useNavigate();
-    
+
     const login = async (userName, password) => {
         const success = handleInputErrors(userName, password);
         if (!success) return;
@@ -19,21 +19,21 @@ const useLogin = () => {
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ userName, password}),
+                body: JSON.stringify({ userName, password }),
             });
-       
-            const data = await res.json();
-            localStorage.setItem("authUser", JSON.stringify(data));
-            setAuthUser(data);
-            if(data.error === "Email is not verified"){
-                navigate('/verification');
-            }   
-            if (data.error) {
-                throw new Error(data.error);
-            }
 
-       
-            
+            const data = await res.json();
+            if (data.error === "Email is not verified") {
+                setAuthUser({ userName });
+                localStorage.setItem("authUser", JSON.stringify(data));
+                navigate("/verification");
+            } else if (data.error) {
+                throw new Error(data.error);
+            } else {
+                localStorage.setItem("authUser", JSON.stringify(data));
+                setAuthUser(data);
+                navigate("/");
+            }
         } catch (error) {
             toast.error(error.message);
         } finally {

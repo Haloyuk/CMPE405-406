@@ -1,5 +1,5 @@
 import express from "express";
-import { signup, login, logout, deleteUser } from "../controllers/auth.controller.js";
+import { signup, login, logout, deleteUser, getProfile } from "../controllers/auth.controller.js";
 import Token from "../models/token.js";
 import User from "../models/user.model.js";
 
@@ -10,6 +10,8 @@ router.post("/register", signup);
 router.post("/login", login);
 
 router.post("/logout", logout);
+
+router.get("/profile/:username", getProfile);
 
 router.get("/confirm/:token", 
 async (req, res) => {

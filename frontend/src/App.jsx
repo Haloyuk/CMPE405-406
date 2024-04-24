@@ -10,63 +10,81 @@ import MailVerificationPage from "./Component/MailVerificationPage/MailVerificat
 import { Toaster } from "react-hot-toast";
 import { useAuthContext } from "./context/AuthContext";
 
-
 function App() {
     const { authUser } = useAuthContext();
-    const isUserVerified = authUser?.isVerified;
-    
+    const isUserVerified = authUser?.isVerified || false;
+
     return (
         <div className="App">
             <Routes>
                 <Route
                     path="/"
                     element={
-                       isUserVerified && authUser ? <HomeForm /> : <Navigate to={"/login"} />
+                        authUser ? (
+                            isUserVerified ? (
+                                <HomeForm />
+                            ) : (
+                                <Navigate to="/verification" />
+                            )
+                        ) : (
+                            <Navigate to="/login" />
+                        )
                     }
                 />
 
-              <Route
-                    path="/login"
-                    element={
-                        isUserVerified && authUser ? (
-                            <Navigate to="/" />
-                        ) 
-                        : authUser && !isUserVerified ? (
-                            <Navigate to="/verification" />
-                        )
-                        : (
-                            <LoginForm />
-                        )
-                    }
-                    
-                />
-                <Route
-                    path="/register"
-                    element={authUser ? <Navigate to="/verification" />:<RegisterForm />}
-                />
+                <Route path="/login" element={<LoginForm />} />
+
+                <Route path="/register" element={<RegisterForm />} />
+
                 <Route
                     path="/profile"
-                    element={isUserVerified && authUser ? (
-                        <ProfilePage />
-                    ) : authUser && !isUserVerified ? (
-                        < Navigate to = '/verification' />
-                    ) : (
-                        <Navigate to="/login" />
-                    ) }
+                    element={
+                        authUser ? (
+                            isUserVerified ? (
+                                <ProfilePage />
+                            ) : (
+                                <Navigate to="/verification" />
+                            )
+                        ) : (
+                            <Navigate to="/login" />
+                        )
+                    }
                 />
+
                 <Route
                     path="/chat"
-                    element={authUser && isUserVerified ? <ChatPage /> : <Navigate to="/login" /> }
+                    element={
+                        authUser ? (
+                            isUserVerified ? (
+                                <ChatPage />
+                            ) : (
+                                <Navigate to="/verification" />
+                            )
+                        ) : (
+                            <Navigate to="/login" />
+                        )
+                    }
                 />
+
                 <Route
                     path="/verification"
-                    element={authUser ? <MailVerificationPage /> : <Navigate to="/login" /> }
+                    element={
+                        authUser ? (
+                            isUserVerified ? (
+                                <Navigate to="/" />
+                            ) : (
+                                <MailVerificationPage />
+                            )
+                        ) : (
+                            <Navigate to="/login" />
+                        )
+                    }
                 />
-                 {/* <Route
+
+                {/* <Route
                     path="/changepassword"
                     element={ <ForgotPage /> }
                 /> */}
-                
             </Routes>
             <Toaster />
         </div>
@@ -74,4 +92,3 @@ function App() {
 }
 
 export default App;
-

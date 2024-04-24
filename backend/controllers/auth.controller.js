@@ -3,7 +3,7 @@ import User from "../models/user.model.js";
 import generateTokenAndSetCookie from "../utils/generateToken.js";
 import { decrypt, encrypt, hashUsername } from "../utils/cryptoUtils.js";
 import Token from "../models/token.js";
-import crypto from 'crypto';
+import crypto from "crypto";
 import verifmail from "../utils/verificationmail.js";
 
 export const signup = async (req, res) => {
@@ -25,16 +25,16 @@ export const signup = async (req, res) => {
         if (user) {
             return res.status(400).json({ error: "Username already exists" });
         }
-       //EMAİL KONTROLÜ, BÜTÜN KULLANICILARIN EMAİLLERİNİ DECRYPT EDİP KONTROL ETMEK
-       // Alternatif varsa düşünülmeli, sistemi yorabilir.
-     
+        //EMAİL KONTROLÜ, BÜTÜN KULLANICILARIN EMAİLLERİNİ DECRYPT EDİP KONTROL ETMEK
+        // Alternatif varsa düşünülmeli, sistemi yorabilir.
+
         const users = await User.find();
-        const decryptedEmails = users.map(user => decrypt(user.email));
-        
+        const decryptedEmails = users.map((user) => decrypt(user.email));
+
         if (decryptedEmails.includes(email)) {
             return res.status(400).json({ error: "Email already exists" });
         }
-   
+
         const salt = await bcrypt.genSalt(12);
         const hashedPassword = await bcrypt.hash(password, salt);
 
@@ -64,16 +64,17 @@ export const signup = async (req, res) => {
                 profilePic: newUser.profilePic,
                 isVerified: false,
             });
-               //TOKEN OLUŞTURMA VE KAYDETME İŞLEMİ
-               const token = new Token(
-                {userId: newUser._id, token: crypto.randomBytes(16).toString('hex')
+            //TOKEN OLUŞTURMA VE KAYDETME İŞLEMİ
+            const token = new Token({
+                userId: newUser._id,
+                token: crypto.randomBytes(16).toString("hex"),
             });
             await token.save();
             console.log(token);
             //TOKEN OLUŞTURMA VE KAYDETME İŞLEMİ SONU
             //EMAİL GÖNDERME İŞLEMİ
             const link = `http://localhost:5000/api/auth/confirm/${token.token}`;
-            await verifmail(email, link);   
+            await verifmail(email, link);
             console.log("Email verified succsessfully.");
             // RETURN EDİLECEK PAGE
         } else {
@@ -108,9 +109,12 @@ export const login = async (req, res) => {
                 .json({ error: "Invalid username or password" });
         }
         //EMAİL VERİFİCAİTON TEST
-         if (!user.isVerified) {
-              return res.status(400).json({ error: "Email is not verified" });
-         }
+        if (!user.isVerified) {
+            return res.status(400).json({
+                error: "Email is not verified",
+                email: decrypt(user.email),
+            });
+        }
         generateTokenAndSetCookie(user._id, res);
         res.status(200).json({
             _id: user._id,
@@ -136,6 +140,26 @@ export const logout = async (req, res) => {
     }
 };
 
+export const getProfile = async (req, res) => {
+    const username = req.params.username;
+    const hashedUsername = hashUsername(username);
+
+    const user = await User.findOne({ userName: hashedUsername });
+
+    if (!user) {
+        return res.status(404).json({ error: "User not found" });
+    }
+
+    res.json({
+        _id: user._id,
+        fullName: decrypt(user.fullName),
+        userName: username,
+        email: decrypt(user.email),
+        gender: decrypt(user.gender),
+        profilePic: user.profilePic,
+    });
+};
+
 //POSTMANDE TEST YAPARKEN HIZLICA KULLANICIYI SİLMEK İÇİN
 export const deleteUser = async (req, res) => {
     try {
@@ -152,22 +176,21 @@ export const deleteUser = async (req, res) => {
         await Token.deleteMany({ userId: user._id });
 
         res.status(200).json({ message: "User deleted successfully" });
-    } catch (error) {   
+    } catch (error) {
         console.log("Error in delete user controller", error.message);
         res.status(500).json({ error: error.message });
-    }       
-}
+    }
+};
 
 export const findUserMail = async (req, res) => {
     try {
         const { userName } = req.body;
         const hashedUsername = hashUsername(userName);
         const email = decrypt(userName.email);
-        console.log(email)
+        console.log(email);
         return email;
-    }
-    catch (error) {
+    } catch (error) {
         console.log("Error in find user mail controller", error.message);
         res.status(500).json({ error: error.message });
     }
-}
+};
