@@ -18,7 +18,7 @@ const useRegister = () => {
             email,
             gender
         );
-        if (!success) return;
+        if (!success) return false;
 
         setLoading(true);
 
@@ -35,6 +35,7 @@ const useRegister = () => {
                     confirmPassword,
                     email,
                     gender,
+                    isVerified: false,
                 }),
             });
 
@@ -47,9 +48,10 @@ const useRegister = () => {
 
             setAuthUser(data);
 
-            console.log(data);
+            return true;
         } catch (error) {
             toast.error(error.message);
+            return false;
         } finally {
             setLoading(false);
         }

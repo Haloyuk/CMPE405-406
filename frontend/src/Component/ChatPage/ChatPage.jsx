@@ -1,20 +1,26 @@
 import "./ChatPage.css";
-import React from "react";
+import React, { useState } from "react";
 import { Link, Route } from "react-router-dom"; // react-router-dom'dan Link componentini içe aktarın
 import useLogout from "../../hooks/useLogout.js";
 //import "./HomeForm.css";
 import { HiOutlineHome } from "react-icons/hi2";
 import { FiUser } from "react-icons/fi";
 import { BiMessageRoundedDetail } from "react-icons/bi";
-import { MdOutlineAddToPhotos } from "react-icons/md";
 import { MdOutlinePowerSettingsNew } from "react-icons/md";
+import Sidebar from "../../Component/Sidebar/Sidebar.jsx"
+import MessageContainer from "../../Component/MessageContainer/MessageContainer.jsx"
+import GroupChat from "../GroupChat/GroupChat.jsx";
 
 const ChatPage = () => {
     const { loading, logout } = useLogout();
+    const [showGroupChat, setShowGroupChat] = useState(false);
+
+    const handleClick = () => {
+        setShowGroupChat(prevState => !prevState);
+      };
 
     return (
         <div>
-
             <div className="navigation">
                 <ul>
                     <li className="list">
@@ -48,6 +54,15 @@ const ChatPage = () => {
                         </a>
                     </li>
                 </ul>
+            </div>
+            <div>
+            <button className="buton" onClick={handleClick}>Create Group</button>
+            
+            </div>
+            <div className='chat1'>
+            {showGroupChat && <GroupChat />}
+            <Sidebar/>
+            <MessageContainer/>
             </div>
         </div>
     );

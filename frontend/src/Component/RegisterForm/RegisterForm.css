@@ -9,6 +9,12 @@
     padding: 40px 50px;
 }
 
+.login-link {
+    font-size: 14.5px;
+    text-align: center;
+    margin: 20px 0 15px;
+}
+
 .wrapper2 h1{
     font-size: 36px;
     text-align: center;

@@ -2,13 +2,10 @@ import "./ProfilePage.css";
 import React from "react";
 import { Link, Route } from "react-router-dom"; // react-router-dom'dan Link componentini içe aktarın
 import useLogout from "../../hooks/useLogout.js";
-// import "./HomeForm.css";
 import { HiOutlineHome } from "react-icons/hi2";
 import { FiUser } from "react-icons/fi";
 import { BiMessageRoundedDetail } from "react-icons/bi";
-import { MdOutlineAddToPhotos } from "react-icons/md";
 import { MdOutlinePowerSettingsNew } from "react-icons/md";
-import { LuEye } from "react-icons/lu";
 import useProfileData from "../../hooks/useProfileData";
 
 const ProfilePage = () => {
@@ -61,34 +58,38 @@ const ProfilePage = () => {
                 />
             </div>
             <br />
-            <button>Change Profile Picture</button>
-            <div>
-                <label className="labels">Full Name&emsp;</label>
-                <input
-                    type="text"
-                    value={profileData.fullName || ""}
-                    readOnly
-                />
-            </div>
+            
+            <div class="wrap">
+    <div class="left-side">
+        <p>
+            <label class="labels">Full Name:&emsp;</label>
+            
+        </p>
 
-            <div>
-                <label className="labels">Username &emsp;</label>
-                <input
-                    type="text"
-                    value={profileData.userName || ""}
-                    readOnly
-                />
-            </div>
+        <p>
+            <label class="labels">Username: &emsp;</label>
+            
+        </p>
 
-            <div>
-                <label className="labels">Email &emsp;</label>
-                <input type="text" value={profileData.email || ""} readOnly />
-            </div>
+        <p>
+            <label class="labels">Email: &emsp;</label>
+            
+        </p>
 
-            <div>
-                <label className="labels">Gender &emsp;</label>
-                <input type="text" value={profileData.gender || ""} readOnly />
-            </div>
+        <p>
+            <label class="labels">Gender: &emsp;</label>
+            
+        </p>
+    </div>
+
+    <div class="right-side">
+        <p><span class="data">{profileData.fullName || ""}</span></p>
+        <p><span class="data">{profileData.userName || ""}</span></p>
+        <p><span class="data">{profileData.email || ""}</span></p>
+        <p><span class="data">{profileData.gender || ""}</span></p>
+    </div>
+</div>
+
         </div>
     );
 };

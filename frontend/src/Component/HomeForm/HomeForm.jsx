@@ -7,18 +7,20 @@ import { FiUser } from "react-icons/fi";
 import { BiMessageRoundedDetail } from "react-icons/bi";
 import { MdOutlineAddToPhotos } from "react-icons/md";
 import { MdOutlinePowerSettingsNew } from "react-icons/md";
+import useProfileData from "../../hooks/useProfileData";
 
 const HomeForm = () => {
     const { loading, logout } = useLogout();
+    const { profileData } = useProfileData();
 
     return (
         <div>
-            <p className="ws">WELCOME TO</p>
-             <img src="Chatcrypt.png" alt="No Data" width="650" height="650"></img>
-             <p> This app was designed as a graduation project by 
+            <h1 className="ws">HELLO {profileData.fullName || ""}! WELCOME TO</h1>
+             <img src="Chatcrypt-yatay.png" alt="No Data" width="650" height="650"></img>
+             <p className="ws"> This app was designed as a graduation project by 
                     2023-2024 academic year spring semester graduates Halil Yüksel,
                     Buse Alasköz, Ege Barlas and Ahmet Fatih Saruhan.</p>
-                    <p>&#169; All rights reserved 2024 </p>
+                    <p className="ws">&#169; All rights reserved 2024 </p>
             <div className="navigation">
                 <ul>
                     <li className="list">

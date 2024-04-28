@@ -5,6 +5,7 @@ import { useState } from "react";
 import useRegister from "../../hooks/useRegister";
 import { Link } from "react-router-dom";
 import ProfilePage from "../ProfilePage/ProfilePage";
+import { useNavigate } from "react-router-dom";
 
 function RegisterForm() {
     const [inputs, setInputs] = useState({
@@ -16,6 +17,8 @@ function RegisterForm() {
         gender: "",
     });
 
+    const navigate = useNavigate();
+
     const { loading, register } = useRegister();
 
     const handleCheckBoxChange = (gender) => {
@@ -24,9 +27,11 @@ function RegisterForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await register(inputs);
+        const registrationIsSuccessful = await register(inputs);
+        if (registrationIsSuccessful) {
+            navigate("/verification");
+        }
     };
-
 
     return (
         <div className="wrapper2">
@@ -133,8 +138,12 @@ function RegisterForm() {
                 <label htmlFor="female"> Female</label>
                 <br />
                 <br />
-                <a href="profile">
-                <button type="submit">Register</button></a>
+
+                <button type="submit">Register</button>
+                <div className="login-link"></div>
+                <p>
+                    Already have an account? <a href="login">Login</a>
+                </p>
             </form>
         </div>
     );
