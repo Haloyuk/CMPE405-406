@@ -23,6 +23,10 @@ export function encrypt(text) {
 }
 
 export function decrypt(encrypted) {
+    if (!encrypted) {
+        return undefined;
+    }
+
     const parts = encrypted.split(":");
     if (parts.length < 2) {
         throw new Error("Invalid encrypted data");

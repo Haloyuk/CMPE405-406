@@ -3,6 +3,8 @@ import { LuUser2 } from "react-icons/lu";
 import { MdLockOutline } from "react-icons/md";
 import "./LoginForm.css";
 import useLogin from "../../hooks/useLogin";
+import useLogout from "../../hooks/useLogout";
+import { Link } from "react-router-dom";
 
 function LoginForm() {
     const [userName, setUsername] = useState("");
@@ -10,10 +12,14 @@ function LoginForm() {
     const [error, setError] = useState("");
 
     const { loading, login } = useLogin();
+    const { logout } = useLogout();
 
     const handleLogin = async (e) => {
         e.preventDefault();
         await login(userName, password);
+    };
+    const handleLogout = async () => {
+        await logout();
     };
 
     return (
@@ -41,16 +47,16 @@ function LoginForm() {
                     />
                 </div>
                 {error && <div className="error">{error}</div>}
-                <div className="remember-forgot">
-                    <label htmlFor="">
-                        <input type="checkbox" /> Remember me{" "}
-                    </label>
-                    <a href="a">Forgot Password?</a>
+                <div className="remember-forgot" >
+                    <a href="changepassword" >Forgot Password?</a>
                 </div>
-                <button type="submit">Login</button>
+                <button>Login</button>
                 <div className="register-link"></div>
                 <p>
-                    Don't have an account? <a href="register">Register</a>
+                    Don't have an account?{" "}
+                    <Link to="/register" onClick={handleLogout}>
+                        Register
+                    </Link>
                 </p>
             </form>
         </div>

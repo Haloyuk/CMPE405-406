@@ -35,7 +35,12 @@ export const sendMessage = async (req, res) => {
 
         await Promise.all([conversation.save(), newMessage.save()]);
 
-        res.status(201).json(newMessage);
+        const decryptedMessage = {
+            ...newMessage._doc,
+            message: decrypt(newMessage.message),
+        };
+
+        res.status(201).json(decryptedMessage);
     } catch (error) {
         console.log("Error in sendMessage controller:", error.message);
         res.status(500).json({ error: "Internal server error" });
@@ -48,7 +53,10 @@ export const getMessages = async (req, res) => {
         const senderId = req.user._id;
         const conversation = await Conversation.findOne({
             participants: { $all: [senderId, userToChatId] },
-        }).populate("messages");
+        }).populate({
+            path: "messages",
+            model: "Message",
+        });
 
         if (!conversation) return res.status(200).json([]);
 

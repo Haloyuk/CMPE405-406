@@ -14,6 +14,12 @@ const userSchema = new mongoose.Schema(
             unique: true,
         },
 
+
+        originalUserName: {
+            type: String,
+            required: true,
+            unique: true,
+        },
         password: {
             type: String,
             required: true,
@@ -35,6 +41,9 @@ const userSchema = new mongoose.Schema(
         profilePic: {
             type: String,
             default: "",
+        },
+        isVerified: {
+            type: Boolean,
         },
     },
     { timestamps: true }
