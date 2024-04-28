@@ -1,10 +1,12 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { useAuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const useLogin = () => {
     const [loading, setLoading] = useState(false);
     const { setAuthUser } = useAuthContext();
+    const navigate = useNavigate();
 
     const login = async (userName, password) => {
         const success = handleInputErrors(userName, password);
@@ -21,12 +23,17 @@ const useLogin = () => {
             });
 
             const data = await res.json();
-            if (data.error) {
+            if (data.error === "Email is not verified") {
+                setAuthUser({ userName });
+                localStorage.setItem("authUser", JSON.stringify(data));
+                navigate("/verification");
+            } else if (data.error) {
                 throw new Error(data.error);
+            } else {
+                localStorage.setItem("authUser", JSON.stringify(data));
+                setAuthUser(data);
+                navigate("/");
             }
-
-            localStorage.setItem("authUser", JSON.stringify(data));
-            setAuthUser(data);
         } catch (error) {
             toast.error(error.message);
         } finally {

@@ -3,6 +3,9 @@ import { LuUser2 } from "react-icons/lu";
 import "./RegisterForm.css";
 import { useState } from "react";
 import useRegister from "../../hooks/useRegister";
+import { Link } from "react-router-dom";
+import ProfilePage from "../ProfilePage/ProfilePage";
+import { useNavigate } from "react-router-dom";
 
 function RegisterForm() {
     const [inputs, setInputs] = useState({
@@ -14,6 +17,8 @@ function RegisterForm() {
         gender: "",
     });
 
+    const navigate = useNavigate();
+
     const { loading, register } = useRegister();
 
     const handleCheckBoxChange = (gender) => {
@@ -22,13 +27,14 @@ function RegisterForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        await register(inputs);
+        const registrationIsSuccessful = await register(inputs);
+        if (registrationIsSuccessful) {
+            navigate("/verification");
+        }
     };
 
-    //console.log(inputs);
-
     return (
-        <div className="wrapper">
+        <div className="wrapper2">
             <form onSubmit={handleSubmit}>
                 <div className="logo"></div>
                 <div className="input-box">
@@ -132,8 +138,9 @@ function RegisterForm() {
                 <label htmlFor="female"> Female</label>
                 <br />
                 <br />
-
-                <button type="submit">Register</button>
+                <a href="profile">
+                    <button type="submit">Register</button>
+                </a>
             </form>
         </div>
     );
