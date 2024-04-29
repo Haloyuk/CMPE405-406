@@ -102,3 +102,35 @@ hr {
     backdrop-filter: blur(8px);
     opacity: 1;
 }
+
+.useronline {
+    position: relative;
+}
+
+.useroffline {
+    position: relative;
+}
+
+.useronline::before {
+    content: "";
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background-color: rgb(46, 199, 46);
+    border: 2px solid #fff;
+}
+
+.useroffline::before {
+    content: "";
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background-color: rgba(69, 69, 69, 0.493);
+    border: 2px solid #fff;
+}

@@ -16,7 +16,7 @@ const Conversation = ({ conversation, lastIdx }) => {
                 className={`other ${isSelected ? "sidebarclick" : ""}`}
                 onClick={() => setSelectedConversation(conversation)}
             >
-                <div className={`${isOnline ? "online" : ""}`}>
+                <div className={`${isOnline ? "useronline" : "useroffline"}`}>
                     <div className="">
                         <img src={conversation.profilePic} alt="no photo"></img>
                     </div>
