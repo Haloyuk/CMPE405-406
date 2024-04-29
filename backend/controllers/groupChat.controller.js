@@ -1,7 +1,16 @@
 import GroupChat from "../models/groupChat.model.js";
 
 export const createGroupChat = async (req, res) => {
+    //console.log(req.body);
     const { name, adminId, users } = req.body;
+
+    if (!req.user) {
+        return res.status(401).json({ error: "User not authenticated" });
+    }
+
+    //const adminId = req.user.id; // Assuming the logged-in user's ID is sent as 'user' in the request
+
+    //console.log("Admin ID:", adminId);
 
     try {
         const newGroupChat = new GroupChat({
@@ -10,11 +19,14 @@ export const createGroupChat = async (req, res) => {
             users: [adminId].concat(users || []),
         });
 
+        //console.log("newGroupChat: ", newGroupChat);
+
         const savedGroupChat = await newGroupChat.save();
 
         res.status(201).json(savedGroupChat);
     } catch (error) {
         console.log("error in createGroupChat: ", error.message);
+        //console.log("error: ", error);
         res.status(500).json({ error: "Error creating group chat" });
     }
 };
@@ -28,6 +40,10 @@ export const addUserToGroupChat = async (req, res) => {
 
         if (!groupChat) {
             return res.status(404).json({ error: "Group chat not found" });
+        }
+
+        if (!groupChat.users) {
+            return res.status(400).json({ error: "Group chat has no users" });
         }
 
         if (groupChat.users.includes(userId)) {
