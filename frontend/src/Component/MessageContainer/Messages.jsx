@@ -4,10 +4,11 @@ import Message from "../MessageContainer/Message";
 import useGetMessages from "../../hooks/useGetMessages";
 import { useRef } from "react";
 import { CiLock } from "react-icons/ci";
-
+import useListenMessages from "../../hooks/useListenMessages";
 
 const Messages = () => {
     const { messages, loading } = useGetMessages();
+    useListenMessages();
     const lastMessageRef = useRef();
 
     useEffect(() => {
@@ -17,9 +18,13 @@ const Messages = () => {
     }, [messages]);
 
     return (
-        
         <div className="messages1">
-            <div className="notif"><CiLock/>Messages are end to end encrypted. No one outside of this chat can read them,not even Chatcrypt.</div><br></br>
+            <div className="notif">
+                <CiLock />
+                Messages are end to end encrypted. No one outside of this chat
+                can read them,not even Chatcrypt.
+            </div>
+            <br></br>
             {!loading &&
                 messages.length > 0 &&
                 messages.map((message) => (
@@ -27,9 +32,7 @@ const Messages = () => {
                         <Message message={message} />
                     </div>
                 ))}
-            {!loading && messages.length === 0 && (
-                <div className=""></div>
-            )}
+            {!loading && messages.length === 0 && <div className=""></div>}
         </div>
     );
 };

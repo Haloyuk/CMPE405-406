@@ -71,12 +71,12 @@ export const signup = async (req, res) => {
                 token: crypto.randomBytes(16).toString("hex"),
             });
             await token.save();
-            console.log(token);
+            //console.log(token);
             //TOKEN OLUŞTURMA VE KAYDETME İŞLEMİ SONU
             //EMAİL GÖNDERME İŞLEMİ
             const link = `http://localhost:5000/api/auth/confirm/${token.token}`;
             await verifmail(email, link);
-            console.log("Email verified succsessfully.");
+            //console.log("Email verified succsessfully.");
             // RETURN EDİLECEK PAGE
         } else {
             res.status(400).json({ error: "Invalid user data" });
@@ -190,7 +190,7 @@ export const findUserMail = async (req, res) => {
         const { userName } = req.body;
         const hashedUsername = hashUsername(userName);
         const email = decrypt(userName.email);
-        console.log(email);
+        //console.log(email);
         return email;
     } catch (error) {
         console.log("Error in find user mail controller", error.message);
@@ -202,14 +202,16 @@ export const resendEmail = async (req, res) => {
     try {
         const { email } = req.body;
         const users = await User.find();
-        for(const user of users){
+        for (const user of users) {
             const decryptedEmail = decrypt(user.email);
-            if(decryptedEmail === email){
+            if (decryptedEmail === email) {
                 try {
                     const userToken = await Token.findOne({ userId: user._id });
                     const link = `http://localhost:5000/api/auth/confirm/${userToken.token}`;
                     verifmail(email, link);
-                    res.status(200).json({ message: "Email sent successfully" });
+                    res.status(200).json({
+                        message: "Email sent successfully",
+                    });
                 } catch (error) {
                     res.status(500).json({ error: error.message });
                 }
