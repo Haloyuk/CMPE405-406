@@ -1,4 +1,5 @@
 import GroupChat from "../models/groupChat.model.js";
+import { io } from "../socket/socket.js";
 
 export const createGroupChat = async (req, res) => {
     //console.log(req.body);
@@ -28,6 +29,23 @@ export const createGroupChat = async (req, res) => {
         console.log("error in createGroupChat: ", error.message);
         //console.log("error: ", error);
         res.status(500).json({ error: "Error creating group chat" });
+    }
+};
+
+export const getGroupChatMessages = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const groupChat = await GroupChat.findById(id);
+
+        if (!groupChat) {
+            return res.status(404).json({ error: "Group chat not found" });
+        }
+
+        res.status(200).json(groupChat.messages);
+    } catch (error) {
+        console.log("error in getGroupChatMessages: ", error.message);
+        res.status(500).json({ error: "Error getting group chat messages" });
     }
 };
 
@@ -91,12 +109,16 @@ export const sendMessageInGroupChat = async (req, res) => {
     try {
         const groupChat = await GroupChat.findById(id);
 
-        if (!groupChat.users.includes(sender)) {
+        if (!groupChat.users.map((user) => user.toString()).includes(sender)) {
             return res.status(403).json({ error: "User not in group chat" });
         }
 
-        groupChat.messages.push({ sender, content, timestamp: new Date() });
+        const newMessage = { sender, content, timestamp: new Date() };
+        groupChat.messages.push(newMessage);
         await groupChat.save();
+
+        // Emit the newGroupMessage event
+        io.emit("newGroupMessage", newMessage);
 
         res.status(200).json(groupChat);
     } catch (error) {
@@ -121,5 +143,22 @@ export const removeGroupChat = async (req, res) => {
     } catch (error) {
         console.log("error in removeGroupChat: ", error.message);
         res.status(500).json({ error: "Error removing group chat" });
+    }
+};
+
+export const groupChatInfo = async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const groupChat = await GroupChat.findById(id);
+
+        if (!groupChat) {
+            return res.status(404).json({ error: "Group chat not found" });
+        }
+
+        res.status(200).json(groupChat);
+    } catch (error) {
+        console.log("error in getGroupChat: ", error.message);
+        res.status(500).json({ error: "Error getting group chat" });
     }
 };

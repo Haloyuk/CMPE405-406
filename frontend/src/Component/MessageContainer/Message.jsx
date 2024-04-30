@@ -7,15 +7,16 @@ import { extractTime } from "../../../../backend/utils/extractTime";
 const Message = ({ message }) => {
     const { authUser } = useAuthContext();
     const { selectedConversation } = useConversation();
-    const formattedTime = extractTime(message.createdAt);
-    const fromMe = message.senderId === authUser._id;
+    const formattedTime = extractTime(message.createdAt || message.timestamp);
+    const fromMe =
+        (message.senderId || message.sender || message.userId) === authUser._id;
     const chatClassName = fromMe ? "messagesend1" : "receivedmessage1";
     //const chatTime = fromMe ? "messagesendtime1" : "receivedmessagetime";
 
     return (
         <div className="">
             <div className={` ${chatClassName} `}>
-                {message.message}
+                {message.message || message.content}
                 <div className="receivedmessagetime">{formattedTime}</div>
             </div>
         </div>

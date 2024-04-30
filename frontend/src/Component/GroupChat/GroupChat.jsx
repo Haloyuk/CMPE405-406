@@ -33,10 +33,12 @@ const GroupChat = () => {
 
     const options = useMemo(
         () =>
-            conversations.map((user) => ({
-                value: user._id,
-                label: user.userName,
-            })),
+            Array.isArray(conversations?.users)
+                ? conversations.users.map((user) => ({
+                      value: user._id,
+                      label: user.userName,
+                  }))
+                : [],
         [conversations]
     );
 

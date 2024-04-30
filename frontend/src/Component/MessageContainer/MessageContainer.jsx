@@ -9,6 +9,8 @@ import useProfileData from "../../hooks/useProfileData.js";
 const MessageContainer = () => {
     const { selectedConversation, setSelectedConversation } = useConversation();
 
+    //console.log("Selected conversation:", selectedConversation);
+
     useEffect(() => {
         return () => {
             setSelectedConversation(null);
@@ -20,17 +22,24 @@ const MessageContainer = () => {
             {!selectedConversation ? (
                 <NoChatSelected />
             ) : (
-                
                 <>
-                  
                     <div className="messagecon2">
                         <span className="messagecon3">to:</span>{" "}
                         <span className="messagecon4">
-                            {selectedConversation.fullName}
-                        </span><hr></hr>
+                            {selectedConversation.isGroupChat
+                                ? selectedConversation.groupName
+                                : selectedConversation.fullName}
+                        </span>
+                        <hr></hr>
                     </div>
-                    
-                    <Messages />
+
+                    <Messages
+                        groupId={
+                            selectedConversation.admin
+                                ? selectedConversation._id
+                                : null
+                        }
+                    />
                     <MessageInput />
                 </>
             )}
@@ -44,7 +53,9 @@ const NoChatSelected = () => {
     return (
         <div className="">
             <p className="nochatscreen">Select a chat to start messaging</p>
-            <p className="nochatscreen-icon"><HiOutlineChatBubbleLeftRight /></p>
+            <p className="nochatscreen-icon">
+                <HiOutlineChatBubbleLeftRight />
+            </p>
         </div>
     );
 };

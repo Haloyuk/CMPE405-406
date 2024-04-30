@@ -111,7 +111,7 @@
 }
 
 .nochatscreen {
-    color:#333;
+    color: #333;
     font-weight: bold;
     font-size: x-large;
 }
@@ -120,7 +120,7 @@
     color: #333;
     font-size: 80px;
 }
-.notif{
+.notif {
     background-color: rgb(211, 211, 171);
     border-radius: 10px;
     font-weight: 600;

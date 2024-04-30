@@ -1,4 +1,5 @@
 import User from "../models/user.model.js";
+import GroupChat from "../models/groupChat.model.js";
 import bcrypt from "bcryptjs";
 import { hashUsername, decrypt } from "../utils/cryptoUtils.js";
 
@@ -9,6 +10,10 @@ export const getUsersForSidebar = async (req, res) => {
         const filteredUsers = await User.find({
             _id: { $ne: loggedInUser },
         }).select("-password");
+
+        const groupChats = await GroupChat.find({
+            users: { $in: [loggedInUser] },
+        });
 
         const decryptedUsers = filteredUsers.map((user) => {
             const decryptedFullName = decrypt(user.fullName);
@@ -28,7 +33,7 @@ export const getUsersForSidebar = async (req, res) => {
             };
         });
 
-        return res.status(200).json(decryptedUsers);
+        return res.status(200).json({ users: decryptedUsers, groupChats });
     } catch (error) {
         console.log("Error in getUsersForSidebar: ", error.message);
         res.status(500).json({ message: "Internal server error" });
