@@ -6,7 +6,7 @@ import GroupChatItem from "../GroupChat/GroupChatItem.jsx";
 const Conversations = () => {
     const { loading, conversations } = useGetConversations();
 
-    const [selectedGroupChat, setSelectedGroupChat] = useState(null);
+    const [selectedGroupChat, setSelectedGroupChat] = useState();
 
     const handleGroupChatClick = (groupChat) => {
         setSelectedGroupChat(groupChat);
@@ -41,6 +41,7 @@ const Conversations = () => {
                     onClick={() => handleGroupChatClick(groupChat)}
                 />
             ))}
+
             {selectedGroupChat && (
                 <div>
                     <h2>{selectedGroupChat.name}</h2>

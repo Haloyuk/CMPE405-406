@@ -5,6 +5,7 @@ import SearchInput from "../Sidebar/SearchInput";
 import useGroupChat from "../../hooks/useGroupChat";
 import useGetConversations from "../../hooks/useGetConversations";
 import toast from "react-hot-toast";
+import Conversations from "../Sidebar/Conversations";
 
 const GroupChat = () => {
     const { createGroupChat } = useGroupChat();
@@ -25,6 +26,7 @@ const GroupChat = () => {
         await createGroupChat(groupName, userIds);
         setGroupName("");
         setSelectedUsers([]);
+        window.location.reload();
     };
 
     const handleUserSelect = (selectedOptions) => {

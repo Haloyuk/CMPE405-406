@@ -11,19 +11,33 @@ import Sidebar from "../../Component/Sidebar/Sidebar.jsx";
 import MessageContainer from "../../Component/MessageContainer/MessageContainer.jsx";
 import GroupChat from "../GroupChat/GroupChat.jsx";
 import GroupChatInfo from "../GroupChat/GroupChatInfo.jsx";
+import GroupChatItem from "../GroupChat/GroupChatItem.jsx";
+import useConversation from "../../zustand/useConversation";
 
 const ChatPage = () => {
     const { loading, logout } = useLogout();
     const [showGroupChat, setShowGroupChat] = useState(false);
-    const [selectedGroupChat, setSelectedGroupChat] = useState(null);
+    //const [selectedGroupChatId, setSelectedGroupChat] = useState(null);
+    const { selectedConversation, setSelectedConversation } = useConversation();
 
     const handleClick = () => {
         setShowGroupChat((prevState) => !prevState);
     };
 
-    const handleGroupChatClick = (groupChat) => {
-        setSelectedGroupChat(groupChat);
-    };
+    /*     const handleGroupChatClick = (groupChat) => {
+        console.log("Clicked group chat:", groupChat);
+        console.log("Setting selected conversation to:", {
+            ...groupChat,
+            isGroup: true,
+        });
+        setSelectedConversation({ ...groupChat, isGroup: true });
+    }; */
+
+    if (selectedConversation && selectedConversation.isGroup) {
+        selectedConversation._id;
+    }
+
+    //selectedConversation !== null && selectedConversation.isGroup === true;
 
     return (
         <div>
@@ -78,8 +92,10 @@ const ChatPage = () => {
                 {showGroupChat && <GroupChat />}
                 <Sidebar />
                 <MessageContainer />
+                {selectedConversation && selectedConversation.isGroup && (
+                    <GroupChatInfo conversation={selectedConversation} />
+                )}
             </div>
-            <GroupChatInfo groupChat={selectedGroupChat} />
         </div>
     );
 };

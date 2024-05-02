@@ -26,8 +26,8 @@ const MessageContainer = () => {
                     <div className="messagecon2">
                         <span className="messagecon3">to:</span>{" "}
                         <span className="messagecon4">
-                            {selectedConversation.isGroupChat
-                                ? selectedConversation.groupName
+                            {selectedConversation.isGroup
+                                ? selectedConversation.name
                                 : selectedConversation.fullName}
                         </span>
                         <hr></hr>

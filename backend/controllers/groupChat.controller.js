@@ -1,5 +1,7 @@
 import GroupChat from "../models/groupChat.model.js";
 import { io } from "../socket/socket.js";
+import User from "../models/user.model.js";
+import { decrypt } from "../utils/cryptoUtils.js";
 
 export const createGroupChat = async (req, res) => {
     //console.log(req.body);
@@ -29,6 +31,31 @@ export const createGroupChat = async (req, res) => {
         console.log("error in createGroupChat: ", error.message);
         //console.log("error: ", error);
         res.status(500).json({ error: "Error creating group chat" });
+    }
+};
+
+export const sendMessageInGroupChat = async (req, res) => {
+    const { sender, content } = req.body;
+    const { id } = req.params;
+
+    try {
+        const groupChat = await GroupChat.findById(id);
+
+        if (!groupChat.users.map((user) => user.toString()).includes(sender)) {
+            return res.status(403).json({ error: "User not in group chat" });
+        }
+
+        const newMessage = { sender, content, timestamp: new Date() };
+        groupChat.messages.push(newMessage);
+        await groupChat.save();
+
+        // Emit the newGroupMessage event
+        io.emit("newGroupMessage", newMessage);
+
+        res.status(200).json(groupChat);
+    } catch (error) {
+        console.log("error in sendMessageInGroupChat: ", error.message);
+        res.status(500).json({ error: "Error sending message in group chat" });
     }
 };
 
@@ -102,31 +129,6 @@ export const removeUserFromGroupChat = async (req, res) => {
     }
 };
 
-export const sendMessageInGroupChat = async (req, res) => {
-    const { sender, content } = req.body;
-    const { id } = req.params;
-
-    try {
-        const groupChat = await GroupChat.findById(id);
-
-        if (!groupChat.users.map((user) => user.toString()).includes(sender)) {
-            return res.status(403).json({ error: "User not in group chat" });
-        }
-
-        const newMessage = { sender, content, timestamp: new Date() };
-        groupChat.messages.push(newMessage);
-        await groupChat.save();
-
-        // Emit the newGroupMessage event
-        io.emit("newGroupMessage", newMessage);
-
-        res.status(200).json(groupChat);
-    } catch (error) {
-        console.log("error in sendMessageInGroupChat: ", error.message);
-        res.status(500).json({ error: "Error sending message in group chat" });
-    }
-};
-
 export const removeGroupChat = async (req, res) => {
     const { id } = req.params;
 
@@ -156,9 +158,29 @@ export const groupChatInfo = async (req, res) => {
             return res.status(404).json({ error: "Group chat not found" });
         }
 
-        res.status(200).json(groupChat);
+        const admin = await User.findById(groupChat.admin);
+        const users = await Promise.all(
+            groupChat.users
+                .filter((userId) => userId.toString() !== admin._id.toString())
+                .map((userId) => User.findById(userId))
+        );
+
+        if (!admin || users.includes(null)) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        const adminInfo = {
+            id: admin._id.toString(),
+            name: decrypt(admin.fullName),
+        };
+        const usersInfo = users.map((user) => ({
+            id: user._id.toString(),
+            name: decrypt(user.fullName),
+        }));
+
+        res.status(200).json({ name: groupChat.name, adminInfo, usersInfo });
     } catch (error) {
-        console.log("error in getGroupChat: ", error.message);
-        res.status(500).json({ error: "Error getting group chat" });
+        console.log("error in getGroupUsers: ", error.message);
+        res.status(500).json({ error: "Error getting user names" });
     }
 };

@@ -13,7 +13,14 @@ const useGetGroupMessages = (groupId) => {
             setLoading(true);
             try {
                 const res = await fetch(
-                    `/api/groupChat/getMessages/${groupId}`
+                    `/api/groupChat/getMessages/${groupId}`,
+                    {
+                        headers: {
+                            "Cache-Control": "no-cache",
+                            Pragma: "no-cache",
+                            Expires: "0",
+                        },
+                    }
                 );
                 const data = await res.json();
                 if (data.error) {
