@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useContext } from "react";
 import Select from "react-select";
 import "./GroupChat.css";
 import SearchInput from "../Sidebar/SearchInput";
@@ -6,12 +6,14 @@ import useGroupChat from "../../hooks/useGroupChat";
 import useGetConversations from "../../hooks/useGetConversations";
 import toast from "react-hot-toast";
 import Conversations from "../Sidebar/Conversations";
+import { RefreshContext } from "../../context/RefreshContext";
 
 const GroupChat = () => {
     const { createGroupChat } = useGroupChat();
     const { conversations, isLoading } = useGetConversations();
     const [groupName, setGroupName] = useState("");
     const [selectedUsers, setSelectedUsers] = useState([]);
+    const { setRefreshKey } = useContext(RefreshContext); // Use the context
 
     const handleCreateGroupChat = async (e) => {
         e.preventDefault();
@@ -20,13 +22,13 @@ const GroupChat = () => {
             return;
         }
         const userIds = selectedUsers.map((user) => user.value);
-        const authUser = JSON.parse(localStorage.getItem("authUser")); // parse the authUser object from local storage
+        const authUser = JSON.parse(localStorage.getItem("authUser"));
         const adminId = authUser._id;
         //console.log(userIds);
         await createGroupChat(groupName, userIds);
         setGroupName("");
         setSelectedUsers([]);
-        window.location.reload();
+        setRefreshKey((oldKey) => oldKey + 1);
     };
 
     const handleUserSelect = (selectedOptions) => {

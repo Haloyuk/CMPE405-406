@@ -13,12 +13,14 @@ import GroupChat from "../GroupChat/GroupChat.jsx";
 import GroupChatInfo from "../GroupChat/GroupChatInfo.jsx";
 import GroupChatItem from "../GroupChat/GroupChatItem.jsx";
 import useConversation from "../../zustand/useConversation";
+import { RefreshContext } from "../../context/RefreshContext.jsx";
 
 const ChatPage = () => {
     const { loading, logout } = useLogout();
     const [showGroupChat, setShowGroupChat] = useState(false);
     //const [selectedGroupChatId, setSelectedGroupChat] = useState(null);
     const { selectedConversation, setSelectedConversation } = useConversation();
+    const [refreshKey, setRefreshKey] = useState(0);
 
     const handleClick = () => {
         setShowGroupChat((prevState) => !prevState);
@@ -89,8 +91,11 @@ const ChatPage = () => {
                 </button>
             </div>
             <div className="chat1">
-                {showGroupChat && <GroupChat />}
-                <Sidebar />
+                <RefreshContext.Provider value={{ refreshKey, setRefreshKey }}>
+                    {" "}
+                    {showGroupChat && <GroupChat />}
+                    <Sidebar key={refreshKey} />
+                </RefreshContext.Provider>{" "}
                 <MessageContainer />
                 {selectedConversation && selectedConversation.isGroup && (
                     <GroupChatInfo conversation={selectedConversation} />
