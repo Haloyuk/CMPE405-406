@@ -14,6 +14,7 @@ import GroupChatInfo from "../GroupChat/GroupChatInfo.jsx";
 import GroupChatItem from "../GroupChat/GroupChatItem.jsx";
 import useConversation from "../../zustand/useConversation";
 import { RefreshContext } from "../../context/RefreshContext.jsx";
+import { AiOutlineUsergroupAdd } from "react-icons/ai";
 
 const ChatPage = () => {
     const { loading, logout } = useLogout();
@@ -70,12 +71,16 @@ const ChatPage = () => {
                                 <span className="text">Chat</span>
                             </Link>
                         </li>
-                        {/* <li className="list">
-                    <a href="ProfilePage.jsx">
-                            <span className="icon"><MdOutlineAddToPhotos /></span>
-                            <span className="text">Create Group Chat</span>
-                        </a>
-                    </li>  */}
+                        <li className="list">
+                            <a>
+                                <span className="icon" onClick={handleClick}>
+                                    <AiOutlineUsergroupAdd />
+                                </span>
+                                <span className="text" onClick={handleClick}>
+                                    Create Group
+                                </span>
+                            </a>
+                        </li>
                         <li className="list">
                             <a href="#" onClick={logout}>
                                 <span className="icon">
@@ -85,11 +90,6 @@ const ChatPage = () => {
                             </a>
                         </li>
                     </ul>
-                </div>
-                <div>
-                    <button className="buton" onClick={handleClick}>
-                        Create Group
-                    </button>
                 </div>
                 <div className="chat1">
                     {showGroupChat && <GroupChat />}
