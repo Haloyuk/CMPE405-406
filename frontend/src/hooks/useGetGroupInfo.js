@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const useGetGroupInfo = (id) => {
+const useGetGroupInfo = (id, refreshKey) => {
     const [loading, setLoading] = useState(false);
     const [groupInfo, setGroupInfo] = useState(null);
     const [error, setError] = useState(null);
@@ -43,7 +43,7 @@ const useGetGroupInfo = (id) => {
         };
 
         fetchData();
-    }, [id]);
+    }, [id, refreshKey]);
 
     return { loading, groupInfo, error };
 };

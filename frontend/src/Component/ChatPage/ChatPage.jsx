@@ -42,66 +42,68 @@ const ChatPage = () => {
     //selectedConversation !== null && selectedConversation.isGroup === true;
 
     return (
-        <div>
-            <div className="navigation">
-                <ul>
-                    <li className="list">
-                        <Link to="/">
-                            <span className="icon">
-                                <HiOutlineHome />
-                            </span>
-                            <span className="text">Home</span>
-                        </Link>
-                    </li>
-                    <li className="list">
-                        <Link to="/profile">
-                            <span className="icon">
-                                <FiUser />
-                            </span>
-                            <span className="text">Profile</span>
-                        </Link>
-                    </li>
-                    <li className="list">
-                        <Link to="/chat">
-                            <span className="icon">
-                                <BiMessageRoundedDetail />
-                            </span>
-                            <span className="text">Chat</span>
-                        </Link>
-                    </li>
-                    {/* <li className="list">
+        <RefreshContext.Provider value={{ refreshKey, setRefreshKey }}>
+            <div>
+                <div className="navigation">
+                    <ul>
+                        <li className="list">
+                            <Link to="/">
+                                <span className="icon">
+                                    <HiOutlineHome />
+                                </span>
+                                <span className="text">Home</span>
+                            </Link>
+                        </li>
+                        <li className="list">
+                            <Link to="/profile">
+                                <span className="icon">
+                                    <FiUser />
+                                </span>
+                                <span className="text">Profile</span>
+                            </Link>
+                        </li>
+                        <li className="list">
+                            <Link to="/chat">
+                                <span className="icon">
+                                    <BiMessageRoundedDetail />
+                                </span>
+                                <span className="text">Chat</span>
+                            </Link>
+                        </li>
+                        {/* <li className="list">
                     <a href="ProfilePage.jsx">
                             <span className="icon"><MdOutlineAddToPhotos /></span>
                             <span className="text">Create Group Chat</span>
                         </a>
                     </li>  */}
-                    <li className="list">
-                        <a href="#" onClick={logout}>
-                            <span className="icon">
-                                <MdOutlinePowerSettingsNew />
-                            </span>
-                            <span className="text">Logout</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            <div>
-                <button className="buton" onClick={handleClick}>
-                    Create Group
-                </button>
-            </div>
-            <div className="chat1">
-                <RefreshContext.Provider value={{ refreshKey, setRefreshKey }}>
-                    {" "}
+                        <li className="list">
+                            <a href="#" onClick={logout}>
+                                <span className="icon">
+                                    <MdOutlinePowerSettingsNew />
+                                </span>
+                                <span className="text">Logout</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <button className="buton" onClick={handleClick}>
+                        Create Group
+                    </button>
+                </div>
+                <div className="chat1">
                     {showGroupChat && <GroupChat />}
                     <Sidebar key={refreshKey} />
-                </RefreshContext.Provider>{" "}
-                <MessageContainer />
-                {selectedConversation && selectedConversation.isGroup && (
-                    <GroupChatInfo conversation={selectedConversation} />
-                )}
+                    <MessageContainer />
+                    {selectedConversation && selectedConversation.isGroup && (
+                        <GroupChatInfo
+                            conversation={selectedConversation}
+                            refreshKey={refreshKey}
+                        />
+                    )}
+                </div>
             </div>
-        </div>
+        </RefreshContext.Provider>
     );
 };
 

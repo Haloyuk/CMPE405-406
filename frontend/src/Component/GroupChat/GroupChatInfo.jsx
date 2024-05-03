@@ -6,26 +6,37 @@ import useRemoveUserFromGroupChat from "../../hooks/useRemoveUserFromGroupChat";
 import useRemoveGroupChat from "../../hooks/useRemoveGroupChat";
 import useGetConversations from "../../hooks/useGetConversations";
 import "./GroupChat.css";
+import { RefreshContext } from "../../context/RefreshContext";
+import { useContext } from "react";
 
 const GroupChatInfo = ({ conversation }) => {
+    const { refreshKey, setRefreshKey } = useContext(RefreshContext);
+
     const {
         loading: groupLoading,
         groupInfo,
         error: groupError,
-    } = useGetGroupInfo(conversation ? conversation._id : undefined);
+    } = useGetGroupInfo(
+        conversation ? conversation._id : undefined,
+        refreshKey
+    );
 
     const {
         loading: usersLoading,
         conversations,
         error: usersError,
-    } = useGetConversations();
+    } = useGetConversations(refreshKey);
+
+    const authUser = JSON.parse(localStorage.getItem("authUser"));
+
+    const isAdmin = groupInfo?.adminInfo.id === authUser._id;
 
     const { addUser: addUserToGroup } = useAddUserToGroupChat();
     const { removeUser: removeUserFromGroup } = useRemoveUserFromGroupChat();
     const { removeGroup: removeGroupChat } = useRemoveGroupChat();
 
-    const [selectedUserToRemove, setSelectedUserToRemove] = useState(null);
-    const [selectedUserToAdd, setSelectedUserToAdd] = useState(null);
+    const [selectedUsersToRemove, setSelectedUsersToRemove] = useState([]);
+    const [selectedUsersToAdd, setSelectedUsersToAdd] = useState([]);
 
     const getAllUsersAndRemoveGroupUsers = (allUsers, groupUsers) => {
         //console.log("All users before filtering:", allUsers);
@@ -71,27 +82,27 @@ const GroupChatInfo = ({ conversation }) => {
         return <div>Error: {groupError || usersError}</div>;
     }
 
-    const handleRemoveUser = () => {
-        console.log("selectedUserToRemove:", selectedUserToRemove);
-        if (selectedUserToRemove) {
-            console.log("Removing user:", selectedUserToRemove);
-            removeUserFromGroup(selectedUserToRemove.value, conversation._id);
+    const handleRemoveUsers = async () => {
+        for (const user of selectedUsersToRemove) {
+            await removeUserFromGroup(user.value, conversation._id);
         }
+        setRefreshKey((prevKey) => prevKey + 1);
     };
 
-    const handleAddUser = () => {
-        if (selectedUserToAdd) {
-            console.log("Adding user:", selectedUserToAdd);
-            addUserToGroup(selectedUserToAdd.value, conversation._id);
+    const handleAddUsers = async () => {
+        for (const user of selectedUsersToAdd) {
+            await addUserToGroup(user.value, conversation._id);
         }
+        setRefreshKey((prevKey) => prevKey + 1);
     };
 
-    const handleDeleteGroup = () => {
-        removeGroupChat(conversation._id);
+    const handleDeleteGroup = async () => {
+        await removeGroupChat(conversation._id);
+        window.location.reload();
     };
 
-    console.log("groupInfo:", groupInfo);
-    console.log("groupInfo.usersInfo:", groupInfo?.usersInfo);
+    //console.log("groupInfo:", groupInfo);
+    //console.log("groupInfo.usersInfo:", groupInfo?.usersInfo);
 
     return (
         <div className="profile-border">
@@ -104,32 +115,41 @@ const GroupChatInfo = ({ conversation }) => {
                 Members:{" "}
                 {groupInfo?.usersInfo.map((user) => user.name).join(", ")}
             </div>
-            <Select
-                className="groupprof3"
-                options={groupInfo?.usersInfo.map((user) => ({
-                    value: user.id,
-                    label: user.name,
-                }))}
-                onChange={setSelectedUserToRemove}
-            />
-            <button className="remove-button" onClick={handleRemoveUser}>
-                Remove Member
-            </button>
-            <Select
-                className="groupprof3"
-                options={allUsers}
-                onChange={setSelectedUserToAdd}
-            />
-            <button className="add-button" onClick={handleAddUser}>
-                Add Member
-            </button>
-            <button
-                className="remove-button"
-                style={{ marginTop: "220px" }}
-                onClick={handleDeleteGroup}
-            >
-                Delete Group
-            </button>
+            {isAdmin && (
+                <>
+                    <Select
+                        className="groupprof3"
+                        options={groupInfo?.usersInfo.map((user) => ({
+                            value: user.id,
+                            label: user.name,
+                        }))}
+                        isMulti
+                        onChange={setSelectedUsersToRemove}
+                    />
+                    <button
+                        className="remove-button"
+                        onClick={handleRemoveUsers}
+                    >
+                        Remove Members
+                    </button>
+                    <Select
+                        className="groupprof3"
+                        options={allUsers}
+                        isMulti
+                        onChange={setSelectedUsersToAdd}
+                    />
+                    <button className="add-button" onClick={handleAddUsers}>
+                        Add Members
+                    </button>
+                    <button
+                        className="remove-button"
+                        style={{ marginTop: "220px" }}
+                        onClick={handleDeleteGroup}
+                    >
+                        Delete Group
+                    </button>
+                </>
+            )}
         </div>
     );
 };
