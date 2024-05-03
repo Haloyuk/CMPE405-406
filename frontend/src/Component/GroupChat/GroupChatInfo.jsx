@@ -8,6 +8,7 @@ import useGetConversations from "../../hooks/useGetConversations";
 import "./GroupChat.css";
 import { RefreshContext } from "../../context/RefreshContext";
 import { useContext } from "react";
+import { useEffect } from "react";
 
 const GroupChatInfo = ({ conversation }) => {
     const { refreshKey, setRefreshKey } = useContext(RefreshContext);
@@ -37,6 +38,8 @@ const GroupChatInfo = ({ conversation }) => {
 
     const [selectedUsersToRemove, setSelectedUsersToRemove] = useState([]);
     const [selectedUsersToAdd, setSelectedUsersToAdd] = useState([]);
+
+    const [wantToLeave, setWantToLeave] = useState(false);
 
     const getAllUsersAndRemoveGroupUsers = (allUsers, groupUsers) => {
         //console.log("All users before filtering:", allUsers);
@@ -74,6 +77,12 @@ const GroupChatInfo = ({ conversation }) => {
         }
     }, [conversations, groupInfo]);
 
+    useEffect(() => {
+        if (wantToLeave && selectedUsersToRemove.length > 0) {
+            handleRemoveUsers();
+        }
+    }, [wantToLeave, selectedUsersToRemove]);
+
     if (groupLoading || usersLoading || !groupInfo || !conversations) {
         return <div>Loading...</div>;
     }
@@ -82,11 +91,18 @@ const GroupChatInfo = ({ conversation }) => {
         return <div>Error: {groupError || usersError}</div>;
     }
 
+    const handleLeaveGroup = async () => {
+        setWantToLeave(true);
+        setSelectedUsersToRemove([{ value: authUser._id }]);
+        await handleRemoveUsers();
+        window.location.reload();
+    };
+
     const handleRemoveUsers = async () => {
         for (const user of selectedUsersToRemove) {
             await removeUserFromGroup(user.value, conversation._id);
         }
-        setRefreshKey((prevKey) => prevKey + 1);
+        if (!wantToLeave) setRefreshKey((prevKey) => prevKey + 1);
     };
 
     const handleAddUsers = async () => {
@@ -115,6 +131,15 @@ const GroupChatInfo = ({ conversation }) => {
                 Members:{" "}
                 {groupInfo?.usersInfo.map((user) => user.name).join(", ")}
             </div>
+            {!isAdmin && (
+                <button
+                    className="remove-button"
+                    style={{ marginTop: "220px" }}
+                    onClick={handleLeaveGroup}
+                >
+                    Leave Group
+                </button>
+            )}
             {isAdmin && (
                 <>
                     <Select
