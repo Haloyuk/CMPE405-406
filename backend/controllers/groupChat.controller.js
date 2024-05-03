@@ -113,6 +113,11 @@ export const removeUserFromGroupChat = async (req, res) => {
 
     try {
         const groupChat = await GroupChat.findById(id);
+
+        if (!groupChat) {
+            return res.status(404).json({ error: "Group chat not found" });
+        }
+
         const userIndex = groupChat.users.indexOf(userId);
 
         if (userIndex === -1) {

@@ -40,7 +40,7 @@ const GroupChat = () => {
             Array.isArray(conversations?.users)
                 ? conversations.users.map((user) => ({
                       value: user._id,
-                      label: user.userName,
+                      label: user.fullName,
                   }))
                 : [],
         [conversations]

@@ -12,6 +12,7 @@ hr {
     cursor: pointer;
     display: flex;
     align-items: center;
+    border-bottom: 2px solid rgba(128, 128, 128, 0.627);
 }
 
 .other img {
@@ -72,7 +73,6 @@ hr {
     border-radius: 50%;
     cursor: pointer;
     background-color: #cbd5e0;
-    /* color: #eee; */
 }
 
 .side1 {
@@ -81,6 +81,7 @@ hr {
     padding: 1rem;
     display: flex;
     flex-direction: column;
+    overflow-x: hidden;
 }
 
 .convos1 {
@@ -89,6 +90,7 @@ hr {
     display: flex;
     flex-direction: column; /* burası ve 1 aşağısı yukarı aşağı sürükleme yapmamızı sağlıyo*/
     overflow: auto;
+    overflow-x: hidden;
 }
 
 /*aşağıdaki kod komple chati saran wrapper ı kontrol ediyor*/
