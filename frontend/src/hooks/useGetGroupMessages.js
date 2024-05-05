@@ -23,6 +23,7 @@ const useGetGroupMessages = (groupId) => {
                     }
                 );
                 const data = await res.json();
+                console.log("Received data:", data);
                 if (data.error) {
                     throw new Error(data.error);
                 }

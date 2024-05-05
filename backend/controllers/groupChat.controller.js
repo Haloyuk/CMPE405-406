@@ -51,11 +51,20 @@ export const sendMessageInGroupChat = async (req, res) => {
 
         const encryptedContent = encrypt(content);
 
+        const file = req.file;
+
         const newMessage = {
             sender,
             senderName: senderUser.fullName,
             content: encryptedContent,
             timestamp: new Date(),
+            filePath:
+                file != null &&
+                (file.mimetype.startsWith("audio/") ||
+                    file.mimetype.startsWith("video/") ||
+                    file.mimetype.startsWith("image/"))
+                    ? file.path
+                    : null,
         };
 
         groupChat.messages.push(newMessage);
@@ -65,6 +74,7 @@ export const sendMessageInGroupChat = async (req, res) => {
             ...newMessage,
             senderName: decrypt(newMessage.senderName),
             content: decrypt(newMessage.content),
+            filePath: newMessage.filePath,
         };
 
         io.emit("newGroupMessage", decryptedMessage);
@@ -92,6 +102,7 @@ export const getGroupChatMessages = async (req, res) => {
                 senderName: decrypt(message.senderName),
                 content: decrypt(message.content),
                 timestamp: message.timestamp.toISOString(),
+                filePath: message.filePath,
             };
         });
 

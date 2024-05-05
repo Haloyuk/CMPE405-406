@@ -36,6 +36,10 @@ const groupChatSchema = new mongoose.Schema({
                 type: Date,
                 default: Date.now,
             },
+            filePath: {
+                type: String,
+                required: false,
+            },
         },
     ],
 });

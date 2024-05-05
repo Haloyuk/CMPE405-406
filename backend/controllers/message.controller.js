@@ -13,9 +13,9 @@ export const sendMessage = async (req, res) => {
         const { id: receiverId } = req.params;
         const senderId = req.user._id;
 
-        if (!message.trim()) {
+        /* if (!message.trim()) {
             // show an error message and return
-        }
+        } */
 
         const file = req.file;
 
