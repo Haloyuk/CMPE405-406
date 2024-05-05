@@ -18,7 +18,7 @@ export const getUsersForSidebar = async (req, res) => {
         const decryptedUsers = filteredUsers.map((user) => {
             const decryptedFullName = decrypt(user.fullName);
             const decryptedEmail = decrypt(user.email);
-            const originalUserName = decrypt(user.originalUserName);
+            const decryptedUserName = decrypt(user.userName);
             const profilePic = user.profilePic;
             const gender = decrypt(user.gender);
             const _id = user._id;
@@ -26,7 +26,7 @@ export const getUsersForSidebar = async (req, res) => {
             return {
                 _id,
                 fullName: decryptedFullName,
-                userName: originalUserName,
+                userName: decryptedUserName,
                 email: decryptedEmail,
                 profilePic,
                 gender,
