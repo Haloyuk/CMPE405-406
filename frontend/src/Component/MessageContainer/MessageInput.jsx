@@ -9,15 +9,18 @@ import useConversation from "../../zustand/useConversation";
 
 const MessageInput = () => {
     const [message, setMessage] = useState("");
+    const [file, setFile] = useState(null); // add this line
     const { loading: loadingOneToOne, sendMessage } = useSendMessage();
     const { loading: loadingGroup, sendGroupMessage } = useSendGroupMessage();
     const { selectedConversation } = useConversation();
 
+    const handleFileChange = (e) => {
+        setFile(e.target.files[0]); // add this line
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!message) return;
-
-        //console.log(selectedConversation);
+        if (!message && !file) return; // modify this line
 
         if (
             selectedConversation &&
@@ -25,13 +28,13 @@ const MessageInput = () => {
             selectedConversation.users.length >= 1
         ) {
             const groupId = selectedConversation._id;
-            //console.log("Group ID:", groupId);
-            await sendGroupMessage(groupId, message);
+            await sendGroupMessage(groupId, message, file); // modify this line
         } else {
-            await sendMessage(message);
+            await sendMessage(message, file); // modify this line
         }
 
         setMessage("");
+        setFile(null); // add this line
     };
 
     return (
@@ -44,7 +47,10 @@ const MessageInput = () => {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                 />
-                {/* <button type="" className="messageinput5">buse</button> */}
+                <input
+                    type="file"
+                    onChange={handleFileChange} // add this line
+                />
                 <button type="submit" className="messageinput4">
                     <LuSend />
                 </button>

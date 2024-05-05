@@ -7,9 +7,17 @@ import User from "../models/user.model.js";
 
 export const sendMessage = async (req, res) => {
     try {
+        console.log(req.body); // log the request body
+        console.log(req.file); // log the file
         const { message } = req.body;
         const { id: receiverId } = req.params;
         const senderId = req.user._id;
+
+        if (!message.trim()) {
+            // show an error message and return
+        }
+
+        const file = req.file;
 
         const senderUser = await User.findById(senderId);
         const receiverUser = await User.findById(receiverId);
@@ -35,6 +43,13 @@ export const sendMessage = async (req, res) => {
             receiverId,
             receiverName: receiverUser.fullName,
             message: encryptedMessage,
+            filePath:
+                file != null &&
+                (file.mimetype.startsWith("audio/") ||
+                    file.mimetype.startsWith("video/") ||
+                    file.mimetype.startsWith("image/"))
+                    ? file.path
+                    : null,
         });
 
         if (newMessage) {
@@ -48,6 +63,7 @@ export const sendMessage = async (req, res) => {
             senderName: decrypt(newMessage.senderName),
             receiverName: decrypt(newMessage.receiverName),
             message: decrypt(newMessage.message),
+            filePath: newMessage.filePath,
         };
 
         const receiverSocketId = getReceiverSocketId(receiverId);
