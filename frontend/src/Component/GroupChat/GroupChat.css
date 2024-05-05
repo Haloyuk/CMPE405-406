@@ -1,8 +1,13 @@
 .bordertest {
-    border-right: 2px solid;
+    /* border-right: 2px solid; */
     border-color: gray;
     padding: 1rem;
     flex-direction: column;
+}
+
+.group-chat-width-fix {
+  width: 300px;
+  border-right: 2px solid gray;
 }
 
 .input-box2 {
@@ -45,3 +50,63 @@
   .buton2:hover {
     background-color: rgba(54, 160, 199, 0.997);
   }
+  
+  .profile-border {
+  border-left: 2px solid gray;
+  min-width: 250px;
+  max-width: 250px;
+}
+
+.groupprof1 {
+  font-size:1.5em;
+  font-weight: bold;
+  color: rgb(55, 53, 31);
+}
+
+.groupprof2 {
+  text-align: left;
+  padding-left: 10px;
+  padding-top: 10px;
+}
+
+.groupprof3 {
+  width: 200px;
+  display: inline-block;
+  padding-top: 10px;
+}
+
+.add-button {
+    bottom: 11px;
+    left: 100px;
+    padding: 10px 20px;
+    margin-top: 7px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    background-color: green;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.remove-button {
+    bottom: 11px;
+    left: 100px;
+    padding: 10px 20px;
+    margin-top: 7px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    color: #fff;
+    background-color: darkred;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    justify-content: center;
+}
+

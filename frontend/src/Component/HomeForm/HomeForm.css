@@ -76,10 +76,12 @@ body {
     transition: .3s;
     font-size: 24px;
     margin-bottom: 5px;
+    cursor: pointer;
 }
 
 .navigation ul li:hover a .icon{
     transform: translateY(-32px);
+    cursor: pointer;
 
 }
 
@@ -92,10 +94,13 @@ body {
     opacity: 0;
     transform: translateY(20px);
     transition: .3s;
+    cursor: pointer;
 }
 
 .navigation ul li:hover a .text {
     opacity: 1;
     transform: translateY(10px);
 }
+
+
 

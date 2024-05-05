@@ -1,12 +1,21 @@
 import Conversation from "../models/conversation.model.js";
 import Message from "../models/message.model.js";
 import { encrypt, decrypt } from "../utils/cryptoUtils.js";
+import { getReceiverSocketId } from "../socket/socket.js";
+import { io } from "../socket/socket.js";
+import User from "../models/user.model.js";
 
 export const sendMessage = async (req, res) => {
     try {
         const { message } = req.body;
         const { id: receiverId } = req.params;
         const senderId = req.user._id;
+
+        const senderUser = await User.findById(senderId);
+        const receiverUser = await User.findById(receiverId);
+        if (!senderUser || !receiverUser) {
+            return res.status(404).json({ error: "User not found" });
+        }
 
         let conversation = await Conversation.findOne({
             participants: { $all: [senderId, receiverId] },
@@ -22,7 +31,9 @@ export const sendMessage = async (req, res) => {
 
         const newMessage = new Message({
             senderId,
+            senderName: senderUser.fullName,
             receiverId,
+            receiverName: receiverUser.fullName,
             message: encryptedMessage,
         });
 
@@ -30,15 +41,19 @@ export const sendMessage = async (req, res) => {
             conversation.messages.push(newMessage._id);
         }
 
-        //await conversation.save();
-        //await newMessage.save();
-
         await Promise.all([conversation.save(), newMessage.save()]);
 
         const decryptedMessage = {
             ...newMessage._doc,
+            senderName: decrypt(newMessage.senderName),
+            receiverName: decrypt(newMessage.receiverName),
             message: decrypt(newMessage.message),
         };
+
+        const receiverSocketId = getReceiverSocketId(receiverId);
+        if (receiverSocketId) {
+            io.to(receiverSocketId).emit("newMessage", decryptedMessage);
+        }
 
         res.status(201).json(decryptedMessage);
     } catch (error) {
@@ -63,6 +78,8 @@ export const getMessages = async (req, res) => {
         const messages = conversation.messages.map((message) => {
             return {
                 ...message._doc,
+                senderName: decrypt(message.senderName),
+                receiverName: decrypt(message.receiverName),
                 message: decrypt(message.message),
             };
         });

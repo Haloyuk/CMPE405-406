@@ -1,11 +1,14 @@
 import React from "react";
 import "./Sidebar.css";
 import useConversation from "../../zustand/useConversation";
+import { useSocketContext } from "../../context/SocketContext";
 
 const Conversation = ({ conversation, lastIdx }) => {
     const { selectedConversation, setSelectedConversation } = useConversation();
 
     const isSelected = selectedConversation?._id === conversation._id;
+    const { onlineUsers } = useSocketContext();
+    const isOnline = onlineUsers.includes(conversation._id);
 
     return (
         <>
@@ -13,7 +16,7 @@ const Conversation = ({ conversation, lastIdx }) => {
                 className={`other ${isSelected ? "sidebarclick" : ""}`}
                 onClick={() => setSelectedConversation(conversation)}
             >
-                <div className="">
+                <div className={`${isOnline ? "useronline" : "useroffline"}`}>
                     <div className="">
                         <img src={conversation.profilePic} alt="no photo"></img>
                     </div>

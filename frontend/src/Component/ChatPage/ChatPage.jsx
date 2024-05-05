@@ -7,66 +7,104 @@ import { HiOutlineHome } from "react-icons/hi2";
 import { FiUser } from "react-icons/fi";
 import { BiMessageRoundedDetail } from "react-icons/bi";
 import { MdOutlinePowerSettingsNew } from "react-icons/md";
-import Sidebar from "../../Component/Sidebar/Sidebar.jsx"
-import MessageContainer from "../../Component/MessageContainer/MessageContainer.jsx"
+import Sidebar from "../../Component/Sidebar/Sidebar.jsx";
+import MessageContainer from "../../Component/MessageContainer/MessageContainer.jsx";
 import GroupChat from "../GroupChat/GroupChat.jsx";
+import GroupChatInfo from "../GroupChat/GroupChatInfo.jsx";
+import GroupChatItem from "../GroupChat/GroupChatItem.jsx";
+import useConversation from "../../zustand/useConversation";
+import { RefreshContext } from "../../context/RefreshContext.jsx";
+import { AiOutlineUsergroupAdd } from "react-icons/ai";
 
 const ChatPage = () => {
     const { loading, logout } = useLogout();
     const [showGroupChat, setShowGroupChat] = useState(false);
+    //const [selectedGroupChatId, setSelectedGroupChat] = useState(null);
+    const { selectedConversation, setSelectedConversation } = useConversation();
+    const [refreshKey, setRefreshKey] = useState(0);
 
     const handleClick = () => {
-        setShowGroupChat(prevState => !prevState);
-      };
+        setShowGroupChat((prevState) => !prevState);
+    };
+
+    /*     const handleGroupChatClick = (groupChat) => {
+        console.log("Clicked group chat:", groupChat);
+        console.log("Setting selected conversation to:", {
+            ...groupChat,
+            isGroup: true,
+        });
+        setSelectedConversation({ ...groupChat, isGroup: true });
+    }; */
+
+    if (selectedConversation && selectedConversation.isGroup) {
+        selectedConversation._id;
+    }
+
+    //selectedConversation !== null && selectedConversation.isGroup === true;
 
     return (
-        <div>
-            <div className="navigation">
-                <ul>
-                    <li className="list">
-                    <Link to="/">
-                            <span className="icon"><HiOutlineHome /></span>
-                            <span className="text">Home</span>
-                        </Link>
-                    </li>
-                    <li className="list">
-                    <Link to="/profile">
-                            <span className="icon"><FiUser /></span>
-                            <span className="text">Profile</span>
-                        </Link>
-                    </li>
-                    <li className="list">
-                    <Link to="/chat">
-                            <span className="icon"><BiMessageRoundedDetail /></span>
-                            <span className="text">Chat</span>
-                        </Link>
-                    </li>
-                    {/* <li className="list">
-                    <a href="ProfilePage.jsx">
-                            <span className="icon"><MdOutlineAddToPhotos /></span>
-                            <span className="text">Create Group Chat</span>
-                        </a>
-                    </li>  */}
-                    <li className="list">
-                        <a href="#" onClick={logout}>
-                            <span className="icon"><MdOutlinePowerSettingsNew /></span>
-                            <span className="text">Logout</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
+        <RefreshContext.Provider value={{ refreshKey, setRefreshKey }}>
             <div>
-            <button className="buton" onClick={handleClick}>Create Group</button>
-            
+                <div className="navigation">
+                    <ul>
+                        <li className="list">
+                            <Link to="/">
+                                <span className="icon">
+                                    <HiOutlineHome />
+                                </span>
+                                <span className="text">Home</span>
+                            </Link>
+                        </li>
+                        <li className="list">
+                            <Link to="/profile">
+                                <span className="icon">
+                                    <FiUser />
+                                </span>
+                                <span className="text">Profile</span>
+                            </Link>
+                        </li>
+                        <li className="list">
+                            <Link to="/chat">
+                                <span className="icon">
+                                    <BiMessageRoundedDetail />
+                                </span>
+                                <span className="text">Chat</span>
+                            </Link>
+                        </li>
+                        <li className="list">
+                            <a>
+                                <span className="icon" onClick={handleClick}>
+                                    <AiOutlineUsergroupAdd />
+                                </span>
+                                <span className="text" onClick={handleClick}>
+                                    Create Group
+                                </span>
+                            </a>
+                        </li>
+                        <li className="list">
+                            <a href="#" onClick={logout}>
+                                <span className="icon">
+                                    <MdOutlinePowerSettingsNew />
+                                </span>
+                                <span className="text">Logout</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div className="chat1">
+                    {showGroupChat && <GroupChat />}
+                    <Sidebar key={refreshKey} />
+                    <MessageContainer />
+                    {selectedConversation && selectedConversation.isGroup && (
+                        <GroupChatInfo
+                            conversation={selectedConversation}
+                            refreshKey={refreshKey}
+                        />
+                    )}
+                </div>
             </div>
-            <div className='chat1'>
-            {showGroupChat && <GroupChat />}
-            <Sidebar/>
-            <MessageContainer/>
-            </div>
-        </div>
+        </RefreshContext.Provider>
     );
 };
 
 export default ChatPage;
-

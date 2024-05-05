@@ -54,42 +54,49 @@ const ProfilePage = () => {
                 <img
                     src={profileData.profilePic}
                     alt="profile-pic"
-                    class="ui-w-80"
+                    className="ui-w-80"
                 />
             </div>
             <br />
-            
-            <div class="wrap">
-    <div class="left-side">
-        <p>
-            <label class="labels">Full Name:&emsp;</label>
-            
-        </p>
 
-        <p>
-            <label class="labels">Username: &emsp;</label>
-            
-        </p>
+            <div className="wrap">
+                <div className="left-side">
+                    <p>
+                        <label className="labels">Full Name:&emsp;</label>
+                    </p>
 
-        <p>
-            <label class="labels">Email: &emsp;</label>
-            
-        </p>
+                    <p>
+                        <label className="labels">Username: &emsp;</label>
+                    </p>
 
-        <p>
-            <label class="labels">Gender: &emsp;</label>
-            
-        </p>
-    </div>
+                    <p>
+                        <label className="labels">Email: &emsp;</label>
+                    </p>
 
-    <div class="right-side">
-        <p><span class="data">{profileData.fullName || ""}</span></p>
-        <p><span class="data">{profileData.userName || ""}</span></p>
-        <p><span class="data">{profileData.email || ""}</span></p>
-        <p><span class="data">{profileData.gender || ""}</span></p>
-    </div>
-</div>
+                    <p>
+                        <label className="labels">Gender: &emsp;</label>
+                    </p>
+                </div>
 
+                <div className="right-side">
+                    <p>
+                        <span className="data">
+                            {profileData.fullName || ""}
+                        </span>
+                    </p>
+                    <p>
+                        <span className="data">
+                            {profileData.userName || ""}
+                        </span>
+                    </p>
+                    <p>
+                        <span className="data">{profileData.email || ""}</span>
+                    </p>
+                    <p>
+                        <span className="data">{profileData.gender || ""}</span>
+                    </p>
+                </div>
+            </div>
         </div>
     );
 };

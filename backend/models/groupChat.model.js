@@ -5,6 +5,11 @@ const groupChatSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    admin: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        required: true,
+    },
     users: [
         {
             type: mongoose.Schema.Types.ObjectId,
@@ -17,6 +22,10 @@ const groupChatSchema = new mongoose.Schema({
             sender: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "User",
+                required: true,
+            },
+            senderName: {
+                type: String,
                 required: true,
             },
             content: {
