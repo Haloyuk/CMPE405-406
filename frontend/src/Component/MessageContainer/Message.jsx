@@ -11,11 +11,17 @@ const Message = ({ message }) => {
     const fromMe =
         (message.senderId || message.sender || message.userId) === authUser._id;
     const chatClassName = fromMe ? "messagesend1" : "receivedmessage1";
-    //const chatTime = fromMe ? "messagesendtime1" : "receivedmessagetime";
+
+    const senderName = fromMe
+        ? "You"
+        : selectedConversation.isGroup
+        ? message.senderName
+        : selectedConversation.fullName;
 
     return (
         <div className="">
             <div className={` ${chatClassName} `}>
+                <div className="receivedmessagetime">{senderName}</div>
                 {message.message || message.content}
                 <div className="receivedmessagetime">{formattedTime}</div>
             </div>

@@ -28,14 +28,12 @@ export const sendMessage = async (req, res) => {
         }
 
         const encryptedMessage = encrypt(message);
-        const encryptedSenderName = encrypt(senderUser.fullName);
-        const encryptedReceiverName = encrypt(receiverUser.fullName);
 
         const newMessage = new Message({
             senderId,
-            senderName: encryptedSenderName,
+            senderName: senderUser.fullName,
             receiverId,
-            receiverName: encryptedReceiverName,
+            receiverName: receiverUser.fullName,
             message: encryptedMessage,
         });
 
@@ -80,6 +78,8 @@ export const getMessages = async (req, res) => {
         const messages = conversation.messages.map((message) => {
             return {
                 ...message._doc,
+                senderName: decrypt(message.senderName),
+                receiverName: decrypt(message.receiverName),
                 message: decrypt(message.message),
             };
         });

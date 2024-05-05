@@ -49,12 +49,11 @@ export const sendMessageInGroupChat = async (req, res) => {
             return res.status(404).json({ error: "Sender not found" });
         }
 
-        const encryptedSenderName = encrypt(senderUser.fullName);
         const encryptedContent = encrypt(content);
 
         const newMessage = {
             sender,
-            senderName: encryptedSenderName,
+            senderName: senderUser.fullName,
             content: encryptedContent,
             timestamp: new Date(),
         };
