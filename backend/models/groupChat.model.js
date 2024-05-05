@@ -24,6 +24,10 @@ const groupChatSchema = new mongoose.Schema({
                 ref: "User",
                 required: true,
             },
+            senderName: {
+                type: String,
+                required: true,
+            },
             content: {
                 type: String,
                 required: true,

@@ -1,35 +1,34 @@
 import GroupChat from "../models/groupChat.model.js";
 import { io } from "../socket/socket.js";
 import User from "../models/user.model.js";
-import { decrypt } from "../utils/cryptoUtils.js";
+import { encrypt, decrypt } from "../utils/cryptoUtils.js";
 
 export const createGroupChat = async (req, res) => {
-    //console.log(req.body);
     const { name, adminId, users } = req.body;
 
     if (!req.user) {
         return res.status(401).json({ error: "User not authenticated" });
     }
 
-    //const adminId = req.user.id; // Assuming the logged-in user's ID is sent as 'user' in the request
-
-    //console.log("Admin ID:", adminId);
-
     try {
+        const encryptedName = encrypt(name);
+
         const newGroupChat = new GroupChat({
-            name,
+            name: encryptedName,
             admin: adminId,
             users: [adminId].concat(users || []),
         });
 
-        //console.log("newGroupChat: ", newGroupChat);
-
         const savedGroupChat = await newGroupChat.save();
 
-        res.status(201).json(savedGroupChat);
+        const decryptedGroupChat = {
+            ...savedGroupChat._doc,
+            name: decrypt(savedGroupChat.name),
+        };
+
+        res.status(201).json(decryptedGroupChat);
     } catch (error) {
         console.log("error in createGroupChat: ", error.message);
-        //console.log("error: ", error);
         res.status(500).json({ error: "Error creating group chat" });
     }
 };
@@ -45,12 +44,31 @@ export const sendMessageInGroupChat = async (req, res) => {
             return res.status(403).json({ error: "User not in group chat" });
         }
 
-        const newMessage = { sender, content, timestamp: new Date() };
+        const senderUser = await User.findById(sender);
+        if (!senderUser) {
+            return res.status(404).json({ error: "Sender not found" });
+        }
+
+        const encryptedSenderName = encrypt(senderUser.fullName);
+        const encryptedContent = encrypt(content);
+
+        const newMessage = {
+            sender,
+            senderName: encryptedSenderName,
+            content: encryptedContent,
+            timestamp: new Date(),
+        };
+
         groupChat.messages.push(newMessage);
         await groupChat.save();
 
-        // Emit the newGroupMessage event
-        io.emit("newGroupMessage", newMessage);
+        const decryptedMessage = {
+            ...newMessage,
+            senderName: decrypt(newMessage.senderName),
+            content: decrypt(newMessage.content),
+        };
+
+        io.emit("newGroupMessage", decryptedMessage);
 
         res.status(200).json(groupChat);
     } catch (error) {
@@ -69,7 +87,16 @@ export const getGroupChatMessages = async (req, res) => {
             return res.status(404).json({ error: "Group chat not found" });
         }
 
-        res.status(200).json(groupChat.messages);
+        const decryptedMessages = groupChat.messages.map((message) => {
+            return {
+                sender: message.sender,
+                senderName: decrypt(message.senderName),
+                content: decrypt(message.content),
+                timestamp: message.timestamp.toISOString(),
+            };
+        });
+
+        res.status(200).json(decryptedMessages);
     } catch (error) {
         console.log("error in getGroupChatMessages: ", error.message);
         res.status(500).json({ error: "Error getting group chat messages" });
@@ -183,7 +210,11 @@ export const groupChatInfo = async (req, res) => {
             name: decrypt(user.fullName),
         }));
 
-        res.status(200).json({ name: groupChat.name, adminInfo, usersInfo });
+        res.status(200).json({
+            name: decrypt(groupChat.name),
+            adminInfo,
+            usersInfo,
+        });
     } catch (error) {
         console.log("error in getGroupUsers: ", error.message);
         res.status(500).json({ error: "Error getting user names" });

@@ -3,12 +3,19 @@ import Message from "../models/message.model.js";
 import { encrypt, decrypt } from "../utils/cryptoUtils.js";
 import { getReceiverSocketId } from "../socket/socket.js";
 import { io } from "../socket/socket.js";
+import User from "../models/user.model.js";
 
 export const sendMessage = async (req, res) => {
     try {
         const { message } = req.body;
         const { id: receiverId } = req.params;
         const senderId = req.user._id;
+
+        const senderUser = await User.findById(senderId);
+        const receiverUser = await User.findById(receiverId);
+        if (!senderUser || !receiverUser) {
+            return res.status(404).json({ error: "User not found" });
+        }
 
         let conversation = await Conversation.findOne({
             participants: { $all: [senderId, receiverId] },
@@ -21,10 +28,14 @@ export const sendMessage = async (req, res) => {
         }
 
         const encryptedMessage = encrypt(message);
+        const encryptedSenderName = encrypt(senderUser.fullName);
+        const encryptedReceiverName = encrypt(receiverUser.fullName);
 
         const newMessage = new Message({
             senderId,
+            senderName: encryptedSenderName,
             receiverId,
+            receiverName: encryptedReceiverName,
             message: encryptedMessage,
         });
 
@@ -32,13 +43,12 @@ export const sendMessage = async (req, res) => {
             conversation.messages.push(newMessage._id);
         }
 
-        //await conversation.save();
-        //await newMessage.save();
-
         await Promise.all([conversation.save(), newMessage.save()]);
 
         const decryptedMessage = {
             ...newMessage._doc,
+            senderName: decrypt(newMessage.senderName),
+            receiverName: decrypt(newMessage.receiverName),
             message: decrypt(newMessage.message),
         };
 

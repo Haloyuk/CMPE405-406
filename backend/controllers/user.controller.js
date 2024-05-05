@@ -33,7 +33,16 @@ export const getUsersForSidebar = async (req, res) => {
             };
         });
 
-        return res.status(200).json({ users: decryptedUsers, groupChats });
+        const decryptedGroupChats = groupChats.map((groupChat) => {
+            return {
+                ...groupChat._doc,
+                name: decrypt(groupChat.name),
+            };
+        });
+
+        return res
+            .status(200)
+            .json({ users: decryptedUsers, groupChats: decryptedGroupChats });
     } catch (error) {
         console.log("Error in getUsersForSidebar: ", error.message);
         res.status(500).json({ message: "Internal server error" });
