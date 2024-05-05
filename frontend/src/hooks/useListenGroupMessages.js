@@ -2,6 +2,7 @@ import { useSocketContext } from "../context/SocketContext";
 import useConversation from "../zustand/useConversation";
 import { useEffect } from "react";
 import notificationSound from "../assets/sounds/notification.mp3";
+import { toast } from "react-hot-toast";
 
 const useListenGroupMessages = () => {
     const { socket, userId } = useSocketContext(); // Get the current user's ID
@@ -10,13 +11,11 @@ const useListenGroupMessages = () => {
 
     useEffect(() => {
         socket?.on("newGroupMessage", (decryptedMessage) => {
-            //console.log("Received new group message:", decryptedMessage);
-            //console.log("Sender ID:", decryptedMessage.sender); // Debug the sender's ID
-            //console.log("Current user ID:", userId); // Debug the current user's ID
             if (decryptedMessage.sender !== userId) {
                 // Check if the sender is not the current user
                 const sound = new Audio(notificationSound);
                 sound.play();
+                toast(`New group message from ${decryptedMessage.senderName}`);
             }
             setGroupMessages([...groupMessages, decryptedMessage]);
         });
