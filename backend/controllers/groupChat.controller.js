@@ -2,6 +2,7 @@ import GroupChat from "../models/groupChat.model.js";
 import { io } from "../socket/socket.js";
 import User from "../models/user.model.js";
 import { encrypt, decrypt } from "../utils/cryptoUtils.js";
+import { getReceiverSocketId } from "../socket/socket.js";
 
 export const createGroupChat = async (req, res) => {
     const { name, adminId, users } = req.body;
@@ -75,9 +76,16 @@ export const sendMessageInGroupChat = async (req, res) => {
             senderName: decrypt(newMessage.senderName),
             content: decrypt(newMessage.content),
             filePath: newMessage.filePath,
+            groupName: decrypt(groupChat.name),
+            groupId: groupChat._id,
         };
 
-        io.emit("newGroupMessage", decryptedMessage);
+        groupChat.users.forEach((userId) => {
+            const socketId = getReceiverSocketId(userId.toString());
+            if (socketId) {
+                io.to(socketId).emit("newGroupMessage", decryptedMessage);
+            }
+        });
 
         res.status(200).json(groupChat);
     } catch (error) {

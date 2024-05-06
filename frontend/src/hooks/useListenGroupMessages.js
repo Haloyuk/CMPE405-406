@@ -6,7 +6,8 @@ import { toast } from "react-hot-toast";
 
 const useListenGroupMessages = () => {
     const { socket, userId } = useSocketContext(); // Get the current user's ID
-    const { groupMessages, setGroupMessages } = useConversation();
+    const { groupMessages, setGroupMessages, selectedConversation } =
+        useConversation();
     const numMessages = groupMessages.length;
 
     useEffect(() => {
@@ -15,9 +16,17 @@ const useListenGroupMessages = () => {
                 // Check if the sender is not the current user
                 const sound = new Audio(notificationSound);
                 sound.play();
-                toast(`New group message from ${decryptedMessage.senderName}`);
+                toast(
+                    `New message in ${decryptedMessage.groupName} from ${decryptedMessage.senderName}`,
+                    {
+                        duration: 7000,
+                    }
+                );
             }
-            setGroupMessages([...groupMessages, decryptedMessage]);
+            if (selectedConversation?._id === decryptedMessage.groupId) {
+                // Check if the groupId of the message matches the selected group
+                setGroupMessages([...groupMessages, decryptedMessage]);
+            }
         });
 
         return () => {

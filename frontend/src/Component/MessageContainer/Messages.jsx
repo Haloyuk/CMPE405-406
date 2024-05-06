@@ -4,35 +4,21 @@ import Message from "../MessageContainer/Message";
 import useGetMessages from "../../hooks/useGetMessages";
 import useGetGroupMessages from "../../hooks/useGetGroupMessages";
 import { CiLock } from "react-icons/ci";
-import useListenMessages from "../../hooks/useListenMessages";
-import useListenGroupMessages from "../../hooks/useListenGroupMessages";
 
 const Messages = ({ groupId }) => {
-    //console.log("GroupId:", groupId);
-
-    let messagesData, loading;
+    let messagesData;
 
     if (groupId) {
         let { groupMessages } = useGetGroupMessages(groupId);
         messagesData = groupMessages;
-        useListenGroupMessages(groupId); // Listen to group messages
     } else {
         let { messages } = useGetMessages();
         messagesData = messages;
-        useListenMessages(); // Listen to one-to-one messages
     }
 
     let messages = Array.isArray(messagesData) ? messagesData : [messagesData];
 
-    //console.log("Structure of messagesData:", messagesData);
-
-    if (groupId && messagesData) {
-        messages = messagesData;
-    }
-    //console.log("messages prop in Messages component:", messages);
-    useListenMessages();
     const lastMessageRef = useRef();
-
     const [messageListVersion, setMessageListVersion] = useState(0);
 
     useEffect(() => {
@@ -44,8 +30,6 @@ const Messages = ({ groupId }) => {
             lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
         }, 100);
     }, [messageListVersion]);
-
-    //console.log("Rendering messages:", messages);
 
     return (
         <div className="messages1">
@@ -70,4 +54,5 @@ const Messages = ({ groupId }) => {
         </div>
     );
 };
+
 export default Messages;

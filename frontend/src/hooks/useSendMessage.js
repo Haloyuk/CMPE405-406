@@ -14,7 +14,7 @@ const useSendMessage = () => {
             if (file) {
                 formData.append("file", file); // append the file if it exists
             }
-            console.log(formData.get("file")); // log the file
+
             const res = await fetch(
                 `/api/messages/send/${selectedConversation._id}`,
                 {

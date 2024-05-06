@@ -12,7 +12,9 @@ const useListenMessages = () => {
         socket?.on("newMessage", (decryptedMessage) => {
             const sound = new Audio(notificationSound);
             sound.play();
-            toast(`New message from ${decryptedMessage.senderName}`);
+            toast(`New message from ${decryptedMessage.senderName}`, {
+                duration: 7000,
+            });
             setMessages([...messages, decryptedMessage]);
         });
 
