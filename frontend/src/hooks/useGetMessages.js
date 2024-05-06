@@ -1,3 +1,4 @@
+import { set } from "mongoose";
 import useConversation from "../zustand/useConversation";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
@@ -25,6 +26,7 @@ const useGetMessages = () => {
             }
         };
         if (selectedConversation?._id) {
+            setMessages([]); // Clear the messages state
             getMessages();
         }
     }, [selectedConversation?._id, setMessages]);
