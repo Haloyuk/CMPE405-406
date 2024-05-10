@@ -17,6 +17,7 @@ import useListenGroupMessages from "../../hooks/useListenGroupMessages";
 import { RefreshContext } from "../../context/RefreshContext.jsx";
 import { AiOutlineUsergroupAdd } from "react-icons/ai";
 import useListenMessages from "../../hooks/useListenMessages.js";
+import Notifications from "../../hooks/useGetNotifications.jsx";
 
 const ChatPage = () => {
     const { loading, logout } = useLogout();
@@ -50,6 +51,7 @@ const ChatPage = () => {
     return (
         <RefreshContext.Provider value={{ refreshKey, setRefreshKey }}>
             <div>
+                <Notifications />
                 <div className="navigation">
                     <ul>
                         <li className="list">

@@ -4,11 +4,13 @@ import { encrypt, decrypt } from "../utils/cryptoUtils.js";
 import { getReceiverSocketId } from "../socket/socket.js";
 import { io } from "../socket/socket.js";
 import User from "../models/user.model.js";
+import Notification from "../models/notification.model.js";
 
 export const sendMessage = async (req, res) => {
     try {
-        console.log(req.body); // log the request body
-        console.log(req.file); // log the file
+        //console.log(req.body); // log the request body
+        //console.log(req.file); // log the file
+
         const { message } = req.body;
         const { id: receiverId } = req.params;
         const senderId = req.user._id;
@@ -58,6 +60,28 @@ export const sendMessage = async (req, res) => {
 
         await Promise.all([conversation.save(), newMessage.save()]);
 
+        // Create a new notification for the receiver
+        const newNotification = new Notification({
+            userId: receiverId, // The ID of the user who will receive the notification
+            messageId: newMessage._id, // The ID of the new message
+            senderId: senderId, // The ID of the user who sent the message
+            message: encrypt(
+                `New message from ${decrypt(senderUser.fullName)}`
+            ), // The content of the message
+        });
+        await newNotification.save();
+
+        const receiverSocketId = getReceiverSocketId(receiverId);
+
+        if (receiverSocketId) {
+            // Convert the Mongoose document to a plain JavaScript object before emitting it
+            const notificationToSend = {
+                ...newNotification.toObject(),
+                message: decrypt(newNotification.message),
+            };
+            io.to(receiverSocketId).emit("newNotification", notificationToSend);
+        }
+
         const decryptedMessage = {
             ...newMessage._doc,
             senderName: decrypt(newMessage.senderName),
@@ -66,7 +90,6 @@ export const sendMessage = async (req, res) => {
             filePath: newMessage.filePath,
         };
 
-        const receiverSocketId = getReceiverSocketId(receiverId);
         if (receiverSocketId) {
             io.to(receiverSocketId).emit("newMessage", decryptedMessage);
         }
