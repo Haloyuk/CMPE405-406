@@ -103,13 +103,13 @@
 .messageinput4 {
     position: absolute;
     top: 0;
-    bottom: 0;
     right: 0;
+    bottom: 21px;
     display: flex;
     align-items: center;
     padding-right: 0.75rem;
     background: transparent;
-    border: hidden;
+    border: none;
     border-radius: 0.5rem;
     cursor: pointer;
 }

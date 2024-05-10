@@ -48,7 +48,7 @@ const GroupChat = () => {
 
     return (
         <>
-            <form onSubmit={handleCreateGroupChat}>
+            <form onSubmit={handleCreateGroupChat} style={{ maxWidth: "300px" }}>
                 <div className="bordertest">
                     <label className="bold">Group Name:</label>
                     <input

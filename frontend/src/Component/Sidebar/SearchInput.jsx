@@ -193,7 +193,7 @@ const SearchInput = () => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="search1">
+        <form onSubmit={handleSubmit} >
             <Select
                 value={selectedOption}
                 onChange={handleChange}
@@ -202,7 +202,6 @@ const SearchInput = () => {
                 placeholder="Search..."
                 isSearchable
             />
-            <button type="submit" className="search3"></button>
         </form>
     );
 };

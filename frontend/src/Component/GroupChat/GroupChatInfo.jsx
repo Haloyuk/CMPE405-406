@@ -126,7 +126,7 @@ const GroupChatInfo = ({ conversation }) => {
             <div className="groupprof2">
                 Group Admin: {groupInfo?.adminInfo.name}
             </div>
-            <br />
+            
             <div>
                 Members:{" "}
                 {groupInfo?.usersInfo.map((user) => user.name).join(", ")}
@@ -134,7 +134,7 @@ const GroupChatInfo = ({ conversation }) => {
             {!isAdmin && (
                 <button
                     className="remove-button"
-                    style={{ marginTop: "220px" }}
+                    //style={{ marginTop: "220px" }}
                     onClick={handleLeaveGroup}
                 >
                     Leave Group
@@ -168,7 +168,7 @@ const GroupChatInfo = ({ conversation }) => {
                     </button>
                     <button
                         className="remove-button"
-                        style={{ marginTop: "220px" }}
+                        //style={{ marginTop: "220px" }}
                         onClick={handleDeleteGroup}
                     >
                         Delete Group

@@ -18,6 +18,7 @@ import { RefreshContext } from "../../context/RefreshContext.jsx";
 import { AiOutlineUsergroupAdd } from "react-icons/ai";
 import useListenMessages from "../../hooks/useListenMessages.js";
 import Notifications from "../../hooks/useGetNotifications.jsx";
+import { FaRegBell } from "react-icons/fa6";
 
 const ChatPage = () => {
     const { loading, logout } = useLogout();
@@ -25,6 +26,11 @@ const ChatPage = () => {
     //const [selectedGroupChatId, setSelectedGroupChat] = useState(null);
     const { selectedConversation, setSelectedConversation } = useConversation();
     const [refreshKey, setRefreshKey] = useState(0);
+    const [isActive, setIsActive] = useState(false);
+
+    const toggleDropdown = () => {
+      setIsActive(!isActive);
+    };
 
     useListenMessages();
     useListenGroupMessages();
@@ -109,6 +115,14 @@ const ChatPage = () => {
                         />
                     )}
                 </div>
+                {/* <div className={`dropdown ${isActive ? 'active' : ''}`}>
+                <button className="dropbtn" onClick={toggleDropdown}><FaRegBell/></button>
+            <div className="dropdown-content">
+                <a href="#">Link 1</a>
+                <a href="#">Link 2</a>
+                <a href="#">Link 3</a>
+            </div>
+            </div> */}
             </div>
         </RefreshContext.Provider>
     );
