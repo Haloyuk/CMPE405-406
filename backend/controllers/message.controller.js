@@ -50,7 +50,7 @@ export const sendMessage = async (req, res) => {
                 (file.mimetype.startsWith("audio/") ||
                     file.mimetype.startsWith("video/") ||
                     file.mimetype.startsWith("image/"))
-                    ? file.path
+                    ? encrypt(file.path) // Encrypt the file path
                     : null,
         });
 
@@ -87,7 +87,7 @@ export const sendMessage = async (req, res) => {
             senderName: decrypt(newMessage.senderName),
             receiverName: decrypt(newMessage.receiverName),
             message: decrypt(newMessage.message),
-            filePath: newMessage.filePath,
+            filePath: decrypt(newMessage.filePath), // Decrypt the file path
         };
 
         if (receiverSocketId) {
@@ -115,12 +115,18 @@ export const getMessages = async (req, res) => {
         if (!conversation) return res.status(200).json([]);
 
         const messages = conversation.messages.map((message) => {
-            return {
-                ...message._doc,
-                senderName: decrypt(message.senderName),
-                receiverName: decrypt(message.receiverName),
-                message: decrypt(message.message),
-            };
+            try {
+                return {
+                    ...message._doc,
+                    senderName: decrypt(message.senderName),
+                    receiverName: decrypt(message.receiverName),
+                    message: decrypt(message.message),
+                    filePath: decrypt(message.filePath),
+                };
+            } catch (error) {
+                console.log("Error decrypting message:", message);
+                throw error;
+            }
         });
 
         res.status(200).json(messages);
