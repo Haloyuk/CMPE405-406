@@ -13,11 +13,15 @@ const Conversations = () => {
     };
 
     const safeConversations = Array.isArray(conversations?.users)
-        ? conversations.users
+        ? [...conversations.users].sort((a, b) =>
+              (a.fullName || "").localeCompare(b.fullName || "")
+          )
         : [];
 
     const safeGroupChats = Array.isArray(conversations?.groupChats)
-        ? conversations.groupChats
+        ? [...conversations.groupChats].sort((a, b) =>
+              (a.name || "").localeCompare(b.name || "")
+          )
         : [];
 
     if (loading) {
@@ -26,19 +30,19 @@ const Conversations = () => {
 
     return (
         <div className="convos1">
-            {safeConversations.map((conversation, idx) => (
-                <Conversation
-                    key={conversation._id}
-                    conversation={conversation}
-                    lastIdx={idx === safeConversations.length - 1}
-                />
-            ))}
             {safeGroupChats.map((groupChat, idx) => (
                 <GroupChatItem
                     key={groupChat._id}
                     groupChat={groupChat}
                     lastIdx={idx === safeGroupChats.length - 1}
                     onClick={() => handleGroupChatClick(groupChat)}
+                />
+            ))}
+            {safeConversations.map((conversation, idx) => (
+                <Conversation
+                    key={conversation._id}
+                    conversation={conversation}
+                    lastIdx={idx === safeConversations.length - 1}
                 />
             ))}
 
