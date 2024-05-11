@@ -142,10 +142,12 @@ const GroupChatInfo = ({ conversation }) => {
                 <>
                     <Select
                         className="groupprof3"
-                        options={groupInfo?.usersInfo.map((user) => ({
-                            value: user.id,
-                            label: user.name,
-                        }))}
+                        options={groupInfo?.usersInfo
+                            .sort((a, b) => a.name.localeCompare(b.name))
+                            .map((user) => ({
+                                value: user.id,
+                                label: user.name,
+                            }))}
                         isMulti
                         onChange={setSelectedUsersToRemove}
                     />
