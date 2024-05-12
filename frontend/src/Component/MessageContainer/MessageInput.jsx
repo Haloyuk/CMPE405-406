@@ -64,7 +64,7 @@ const MessageInput = () => {
                     onChange={handleFileChange}
                     style={{ display: "none" }} // hide the file input
                 />
-                <span style={{ color: 'dodgerblue' }}>{fileName}</span> 
+                <span style={{ color: 'rgba(54, 160, 199, 0.534)' }}>{fileName}</span> 
                 <button type="submit" className="messageinput4">
                     <LuSend />
                 </button>
