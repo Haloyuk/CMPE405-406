@@ -1,12 +1,23 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Conversation from "../Sidebar/Conversation.jsx";
 import useGetConversations from "../../hooks/useGetConversations";
 import GroupChatItem from "../GroupChat/GroupChatItem.jsx";
+import useConversation from "../../zustand/useConversation";
 
 const Conversations = () => {
     const { loading, conversations } = useGetConversations();
+    const { selectedConversation } = useConversation();
 
     const [selectedGroupChat, setSelectedGroupChat] = useState();
+
+    useEffect(() => {
+        if (selectedConversation) {
+            const id = selectedConversation.isGroup
+                ? `groupChat-${selectedConversation._id}`
+                : `conversation-${selectedConversation._id}`;
+            document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+        }
+    }, [selectedConversation]);
 
     const handleGroupChatClick = (groupChat) => {
         setSelectedGroupChat(groupChat);
@@ -33,6 +44,7 @@ const Conversations = () => {
             {safeGroupChats.map((groupChat, idx) => (
                 <GroupChatItem
                     key={groupChat._id}
+                    id={`groupChat-${groupChat._id}`}
                     groupChat={groupChat}
                     lastIdx={idx === safeGroupChats.length - 1}
                     onClick={() => handleGroupChatClick(groupChat)}
@@ -41,6 +53,7 @@ const Conversations = () => {
             {safeConversations.map((conversation, idx) => (
                 <Conversation
                     key={conversation._id}
+                    id={`conversation-${conversation._id}`}
                     conversation={conversation}
                     lastIdx={idx === safeConversations.length - 1}
                 />
