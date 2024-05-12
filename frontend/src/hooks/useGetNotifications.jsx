@@ -2,15 +2,22 @@ import React, { useEffect, useState } from "react";
 import { extractTime } from "../../../backend/utils/extractTime";
 import useConversation from "../zustand/useConversation";
 import { useSocketContext } from "../context/SocketContext";
+import "../Component/Notifications.css";
+import { FaRegBell } from "react-icons/fa6";
+import { FaTrashCan } from "react-icons/fa6";
 
 function Notifications() {
     const { socket, userId } = useSocketContext();
+    const [isActive, setIsActive] = useState(false);
 
     const [isLoading, setIsLoading] = useState(!userId);
     const [notifications, setNotifications] = useState([]);
     const [latestNotifications, setLatestNotifications] = useState({});
     const { selectedConversation, setSelectedConversation } = useConversation();
 
+    const toggleDropdown = () => {
+        setIsActive(!isActive);
+    };
     useEffect(() => {
         if (!userId) return;
 
@@ -44,6 +51,11 @@ function Notifications() {
 
         fetchNotifications();
     }, [userId]);
+    useEffect(() => {
+        if (notifications.length === 0) {
+            setIsActive(false);
+        }
+    }, [notifications]);
 
     useEffect(() => {
         if (!socket || isLoading) return;
@@ -102,6 +114,57 @@ function Notifications() {
             });
         }
     }, [selectedConversation, notifications]);
+
+    const handleMarkAsSeenButton = async (_id) => {
+        const notification = notifications.find(
+            (notification) => notification._id === _id
+        );
+
+        if (!notification) {
+            console.error(`No notification found with _id: ${_id}`);
+            return;
+        }
+
+        // Optimistically update state
+        setNotifications((prevNotifications) =>
+            prevNotifications.filter(
+                (oldNotification) =>
+                    !(
+                        oldNotification.senderId === notification.senderId &&
+                        oldNotification.groupChat === notification.groupChat
+                    )
+            )
+        );
+
+        try {
+            // Mark all notifications from the same sender and group as seen
+            notifications.forEach((oldNotification) => {
+                if (
+                    oldNotification.senderId === notification.senderId &&
+                    oldNotification.groupChat === notification.groupChat
+                ) {
+                    handleMarkAsSeen(oldNotification._id);
+                }
+            });
+
+            // Update latestNotifications state
+            setLatestNotifications((prevLatestNotifications) => {
+                const updatedNotifications = { ...prevLatestNotifications };
+
+                if (notification.groupChat) {
+                    delete updatedNotifications[
+                        `${notification.groupChat}-${notification.senderId}`
+                    ];
+                } else {
+                    delete updatedNotifications[notification.senderId];
+                }
+
+                return updatedNotifications;
+            });
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
     const handleMarkAsSeen = async (_id) => {
         const notification = notifications.find(
@@ -170,14 +233,34 @@ function Notifications() {
     }
 
     return (
-        <div>
-            <h1>Notifications</h1>
-            {Object.values(latestNotifications).map((notification) => (
-                <div key={notification._id}>
-                    <p>{notification.message}</p>
-                    <p>Time: {extractTime(notification.timestamp)}</p>
+        <div className={`dropdown ${isActive ? "active" : ""}`}>
+            {notifications.length > 0 && (
+                <div className="animated-button">
+                    <button className="dropbtn" onClick={toggleDropdown}>
+                        <FaRegBell />
+                    </button>
                 </div>
-            ))}
+            )}
+            <div className="dropdown-content">
+                {Object.values(latestNotifications).map((notification) => (
+                    <div key={notification._id}>
+                        <div className="notification-content">
+                            <a>{notification.message}</a>
+                            <a className="">
+                                {extractTime(notification.timestamp)}
+                            </a>
+                            <button
+                                onClick={() =>
+                                    handleMarkAsSeenButton(notification._id)
+                                }
+                                className="close-notifi"
+                            >
+                                <FaTrashCan />
+                            </button>
+                        </div>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }

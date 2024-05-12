@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useState, useRef } from "react";
 import "./MessageContainer.css";
 import { LuSend } from "react-icons/lu";
-import { useState } from "react";
 import useSendMessage from "../../hooks/useSendMessage";
 import useSendGroupMessage from "../../hooks/useSendGroupMessages";
 import { GrFormAttachment } from "react-icons/gr";
@@ -9,18 +8,19 @@ import useConversation from "../../zustand/useConversation";
 
 const MessageInput = () => {
     const [message, setMessage] = useState("");
-    const [file, setFile] = useState(null); // add this line
+    const [file, setFile] = useState(null);
+    const fileInputRef = useRef(); // create a ref for the file input
     const { loading: loadingOneToOne, sendMessage } = useSendMessage();
     const { loading: loadingGroup, sendGroupMessage } = useSendGroupMessage();
     const { selectedConversation } = useConversation();
 
     const handleFileChange = (e) => {
-        setFile(e.target.files[0]); // add this line
+        setFile(e.target.files[0]);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!message && !file) return; // modify this line
+        if (!message && !file) return;
 
         if (
             selectedConversation &&
@@ -28,13 +28,14 @@ const MessageInput = () => {
             selectedConversation.users.length >= 1
         ) {
             const groupId = selectedConversation._id;
-            await sendGroupMessage(groupId, message, file); // modify this line
+            await sendGroupMessage(groupId, message, file);
         } else {
-            await sendMessage(message, file); // modify this line
+            await sendMessage(message, file);
         }
 
         setMessage("");
-        setFile(null); // add this line
+        setFile(null);
+        fileInputRef.current.value = ""; // clear the file input field
     };
 
     return (
@@ -49,7 +50,8 @@ const MessageInput = () => {
                 />
                 <input
                     type="file"
-                    onChange={handleFileChange} // add this line
+                    ref={fileInputRef} // attach the ref to the file input
+                    onChange={handleFileChange}
                 />
                 <button type="submit" className="messageinput4">
                     <LuSend />

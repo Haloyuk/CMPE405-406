@@ -115,14 +115,6 @@ const ChatPage = () => {
                         />
                     )}
                 </div>
-                {/* <div className={`dropdown ${isActive ? 'active' : ''}`}>
-                <button className="dropbtn" onClick={toggleDropdown}><FaRegBell/></button>
-            <div className="dropdown-content">
-                <a href="#">Link 1</a>
-                <a href="#">Link 2</a>
-                <a href="#">Link 3</a>
-            </div>
-            </div> */}
             </div>
         </RefreshContext.Provider>
     );
