@@ -14,8 +14,12 @@ const MessageInput = () => {
     const { loading: loadingGroup, sendGroupMessage } = useSendGroupMessage();
     const { selectedConversation } = useConversation();
 
+    const [fileName, setFileName] = useState("");
+
+    // Update the handleFileChange function
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
+        setFileName(e.target.files[0]?.name); // Set the file name
     };
 
     const handleSubmit = async (e) => {
@@ -35,6 +39,7 @@ const MessageInput = () => {
 
         setMessage("");
         setFile(null);
+        setFileName(""); // Reset the file name
         fileInputRef.current.value = ""; // clear the file input field
     };
 
@@ -48,11 +53,18 @@ const MessageInput = () => {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                 />
+                <label htmlFor="fileInput" className="custom-file-upload">
+                    <GrFormAttachment />
+                    <span>Choose File</span> {/* Change the color here */}
+                </label>
                 <input
+                    id="fileInput"
                     type="file"
                     ref={fileInputRef} // attach the ref to the file input
                     onChange={handleFileChange}
+                    style={{ display: "none" }} // hide the file input
                 />
+                <span style={{ color: 'dodgerblue' }}>{fileName}</span> 
                 <button type="submit" className="messageinput4">
                     <LuSend />
                 </button>
