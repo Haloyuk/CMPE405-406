@@ -5,11 +5,12 @@ import { useSocketContext } from "../context/SocketContext";
 import "../Component/Notifications.css";
 import { FaRegBell } from "react-icons/fa6";
 import { FaTrashCan } from "react-icons/fa6";
+import useGetConversations from "./useGetConversations";
 
 function Notifications() {
     const { socket, userId } = useSocketContext();
     const [isActive, setIsActive] = useState(false);
-
+    const { conversations } = useGetConversations();
     const [isLoading, setIsLoading] = useState(!userId);
     const [notifications, setNotifications] = useState([]);
     const [latestNotifications, setLatestNotifications] = useState({});
@@ -245,7 +246,31 @@ function Notifications() {
                 {Object.values(latestNotifications).map((notification) => (
                     <div key={notification._id}>
                         <div className="notification-content">
-                            <a>{notification.message}</a>
+                            <a
+                                onClick={() => {
+                                    let conversation;
+                                    if (notification.groupChat) {
+                                        conversation =
+                                            conversations.groupChats.find(
+                                                (groupChat) =>
+                                                    groupChat._id ===
+                                                    notification.groupChat
+                                            );
+                                    } else {
+                                        conversation = conversations.users.find(
+                                            (user) =>
+                                                user._id ===
+                                                notification.senderId
+                                        );
+                                    }
+                                    setSelectedConversation({
+                                        ...conversation,
+                                        isGroup: !!notification.groupChat,
+                                    });
+                                }}
+                            >
+                                {notification.message}
+                            </a>
                             <a className="">
                                 {extractTime(notification.timestamp)}
                             </a>
