@@ -233,9 +233,28 @@ function Notifications() {
         return <div>Loading...</div>;
     }
 
+    let shouldShowBell = false;
+    if (notifications.length > 0) {
+        if (!selectedConversation) {
+            shouldShowBell = true;
+        } else {
+            const filteredNotifications = notifications.filter(
+                (notification) =>
+                    !(
+                        notification._id === notification._id &&
+                        ((notification.senderId === selectedConversation._id &&
+                            !notification.groupChat) ||
+                            notification.groupChat === selectedConversation._id)
+                    )
+            );
+
+            shouldShowBell = filteredNotifications.length > 0;
+        }
+    }
+
     return (
         <div className={`dropdown ${isActive ? "active" : ""}`}>
-            {notifications.length > 0 && (
+            {shouldShowBell && (
                 <div className="animated-button">
                     <button className="dropbtn" onClick={toggleDropdown}>
                         <FaRegBell />
