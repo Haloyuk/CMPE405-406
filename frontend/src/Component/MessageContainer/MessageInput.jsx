@@ -45,31 +45,40 @@ const MessageInput = () => {
 
     return (
         <form className="messageinput1" onSubmit={handleSubmit}>
-            <div className="messageinput2">
-                <input
-                    type="text"
-                    className="messageinput3"
-                    placeholder="Send a message.."
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                />
-                <label htmlFor="fileInput" className="custom-file-upload">
-                    <GrFormAttachment />
-                    <span>Choose File</span> {/* Change the color here */}
-                </label>
-                <input
-                    id="fileInput"
-                    type="file"
-                    ref={fileInputRef} // attach the ref to the file input
-                    onChange={handleFileChange}
-                    style={{ display: "none" }} // hide the file input
-                />
-                <span style={{ color: 'rgba(54, 160, 199, 0.534)' }}>{fileName}</span> 
-                <button type="submit" className="messageinput4">
-                    <LuSend />
-                </button>
-            </div>
-        </form>
+    <div className="messageinput2">
+        <div className="input-container" style={{ position: 'relative', width: '100%', display: 'flex', alignItems: 'center' }}>
+            <input
+                type="text"
+                className="messageinput3"
+                placeholder="Send a message.."
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+            />
+            <button type="submit" className="messageinput4" >
+                <LuSend size="20px"/>
+            </button>
+        </div>
+        <div className="file-upload-container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <label htmlFor="fileInput" className="custom-file-upload" style={{cursor: 'pointer', display: 'flex', alignItems: 'center'}}>
+                <GrFormAttachment size="25px"/>
+                <span style={{cursor: 'pointer', fontSize:'17px'}}>Choose File</span> {/* Change the color here */}
+            </label>
+            <input
+                id="fileInput"
+                type="file"
+                ref={fileInputRef} // attach the ref to the file input
+                onChange={handleFileChange}
+                style={{ display: "none" }} // hide the file input
+            />
+       &nbsp;&nbsp; <span style={{ color: 'dodgerblue', maxWidth: '300px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{fileName}</span> 
+ 
+</div>
+        
+
+    </div>
+</form>
+
+
     );
 };
 export default MessageInput;

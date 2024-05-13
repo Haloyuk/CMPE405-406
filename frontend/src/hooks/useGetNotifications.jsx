@@ -290,9 +290,9 @@ function Notifications() {
                             >
                                 {notification.message}
                             </a>
-                            <a className="">
+                            <span className="">
                                 {extractTime(notification.timestamp)}
-                            </a>
+                            </span>
                             <button
                                 onClick={() =>
                                     handleMarkAsSeenButton(notification._id)

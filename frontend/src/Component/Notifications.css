@@ -77,6 +77,18 @@
     padding: 12px 10px;
     text-decoration: none;
     display: block;
+    cursor: pointer;
+  }
+
+  .dropdown-content span {
+    color: black;
+    padding: 12px 10px;
+    text-decoration: none;
+    display: block;
+  }
+
+  .dropdown-content a:hover {
+    background-color: #a8a8a8a9;
   }
   
   .dropdown.active .dropdown-content {
