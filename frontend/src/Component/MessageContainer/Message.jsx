@@ -19,17 +19,46 @@ const Message = ({ message }) => {
         ? message.senderName
         : selectedConversation.fullName;
 
-        let fileComponent = null;
+    let fileComponent = null;
     if (message.filePath) {
-        const ext = message.filePath.split('.').pop().toLowerCase();
+        const ext = message.filePath.split(".").pop().toLowerCase();
         if (["png", "jpg", "jpeg", "gif"].includes(ext)) {
-          fileComponent = <img className="chat-image" src={fileUrl} alt="Uploaded file" />;
+            fileComponent = (
+                <img className="chat-image" src={fileUrl} alt="Uploaded file" />
+            );
         } else if (["mp3", "wav", "ogg"].includes(ext)) {
-          fileComponent = <audio className="chat-audio" controls src={fileUrl}>Your browser does not support the audio element.</audio>;
+            fileComponent = (
+                <audio className="chat-audio" controls src={fileUrl}>
+                    Your browser does not support the audio element.
+                </audio>
+            );
         } else if (["mp4", "webm", "ogg"].includes(ext)) {
-          fileComponent = <video className="chat-video" controls src={fileUrl}>Your browser does not support the video element.</video>;
+            fileComponent = (
+                <video className="chat-video" controls src={fileUrl}>
+                    Your browser does not support the video element.
+                </video>
+            );
+        } else {
+            const fileName = message.filePath.split("/").pop();
+
+            // Extract the file extension
+            const fileExtension = fileName.split(".").pop();
+
+            // Prepend "FILE" to the file extension
+            const displayFileName = `FILE.${fileExtension}`;
+
+            fileComponent = (
+                <a
+                    href={fileUrl}
+                    download
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    {displayFileName}
+                </a>
+            );
         }
-      }
+    }
 
     return (
         <div className="">

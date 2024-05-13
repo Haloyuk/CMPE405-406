@@ -60,13 +60,7 @@ export const sendMessageInGroupChat = async (req, res) => {
             senderName: senderUser.fullName,
             content: encryptedContent,
             timestamp: new Date(),
-            filePath:
-                file != null &&
-                (file.mimetype.startsWith("audio/") ||
-                    file.mimetype.startsWith("video/") ||
-                    file.mimetype.startsWith("image/"))
-                    ? encrypt(file.path)
-                    : null,
+            filePath: file != null ? encrypt(file.path) : null,
         };
 
         groupChat.messages.push(newMessage);

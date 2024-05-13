@@ -45,13 +45,7 @@ export const sendMessage = async (req, res) => {
             receiverId,
             receiverName: receiverUser.fullName,
             message: encryptedMessage,
-            filePath:
-                file != null &&
-                (file.mimetype.startsWith("audio/") ||
-                    file.mimetype.startsWith("video/") ||
-                    file.mimetype.startsWith("image/"))
-                    ? encrypt(file.path) // Encrypt the file path
-                    : null,
+            filePath: file != null ? encrypt(file.path) : null,
         });
 
         if (newMessage) {
@@ -87,7 +81,7 @@ export const sendMessage = async (req, res) => {
             senderName: decrypt(newMessage.senderName),
             receiverName: decrypt(newMessage.receiverName),
             message: decrypt(newMessage.message),
-            filePath: decrypt(newMessage.filePath), // Decrypt the file path
+            filePath: decrypt(newMessage.filePath),
         };
 
         if (receiverSocketId) {
