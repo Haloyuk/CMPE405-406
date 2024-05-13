@@ -34,6 +34,7 @@ const MessageContainer = () => {
                     </div>
 
                     <Messages
+                        key={selectedConversation._id}
                         groupId={
                             selectedConversation.admin
                                 ? selectedConversation._id

@@ -113,7 +113,7 @@ function RegisterForm() {
                 <input
                     type="radio"
                     name="gender"
-                    value="male"
+                    value="Male"
                     required
                     onChange={(e) =>
                         setInputs({
@@ -122,11 +122,11 @@ function RegisterForm() {
                         })
                     }
                 />
-                <label htmlFor="male">Male </label>
+                <label htmlFor="Male">Male </label>
                 <input
                     type="radio"
                     name="gender"
-                    value="female"
+                    value="Female"
                     required
                     onChange={(e) =>
                         setInputs({
@@ -135,7 +135,7 @@ function RegisterForm() {
                         })
                     }
                 />
-                <label htmlFor="female"> Female</label>
+                <label htmlFor="Female"> Female</label>
                 <br />
                 <br />
 

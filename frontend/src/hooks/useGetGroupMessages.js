@@ -39,6 +39,7 @@ const useGetGroupMessages = (groupId) => {
         };
 
         if (groupId) {
+            setGroupMessages([]); // Clear the groupMessages state
             getGroupMessages();
         }
 

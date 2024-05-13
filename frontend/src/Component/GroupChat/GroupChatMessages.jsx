@@ -7,6 +7,7 @@ import Messages from "./Messages";
 
 const GroupChatMessages = ({ groupId, userId }) => {
     const [message, setMessage] = useState("");
+    const [file, setFile] = useState(null); // Add this line
     const { groupMessages, loading } = useConversation(); // Get the groupMessages state from useConversation
 
     useGetGroupMessages(groupId); // Call the hook
@@ -16,19 +17,21 @@ const GroupChatMessages = ({ groupId, userId }) => {
         event.preventDefault();
 
         try {
+            const formData = new FormData(); // Create a new FormData object
+            formData.append("sender", userId);
+            formData.append("content", message);
+            if (file) {
+                formData.append("file", file); // Add the file to the FormData object
+            }
+
             const response = await fetch(`/api/groupChat/${groupId}`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                    sender: userId,
-                    content: message,
-                }),
+                body: formData, // Send the FormData object
             });
             const data = await response.json();
-            console.log(data);
+            //console.log(data);
             setMessage("");
+            setFile(null); // Reset the file state
         } catch (error) {
             console.error(error);
         }
@@ -45,6 +48,10 @@ const GroupChatMessages = ({ groupId, userId }) => {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Type your message here"
+                />
+                <input
+                    type="file"
+                    onChange={(e) => setFile(e.target.files[0])} // Set the file state when a file is selected
                 />
                 <button type="submit">Send</button>
             </form>

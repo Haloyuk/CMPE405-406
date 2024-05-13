@@ -2,6 +2,8 @@ import GroupChat from "../models/groupChat.model.js";
 import { io } from "../socket/socket.js";
 import User from "../models/user.model.js";
 import { encrypt, decrypt } from "../utils/cryptoUtils.js";
+import { getReceiverSocketId } from "../socket/socket.js";
+import Notification from "../models/notification.model.js";
 
 export const createGroupChat = async (req, res) => {
     const { name, adminId, users } = req.body;
@@ -51,23 +53,66 @@ export const sendMessageInGroupChat = async (req, res) => {
 
         const encryptedContent = encrypt(content);
 
+        const file = req.file;
+
         const newMessage = {
             sender,
             senderName: senderUser.fullName,
             content: encryptedContent,
             timestamp: new Date(),
+            filePath: file != null ? encrypt(file.path) : null,
         };
 
         groupChat.messages.push(newMessage);
         await groupChat.save();
 
+        for (const userId of groupChat.users) {
+            if (userId.toString() !== sender) {
+                // Don't send a notification to the sender
+                const newNotification = new Notification({
+                    userId: userId, // The ID of the user who will receive the notification
+                    groupChat: id, // The ID of the group chat
+                    senderId: senderUser._id, // The ID of the user who sent the message
+                    message: encrypt(
+                        `New message from ${decrypt(
+                            senderUser.fullName
+                        )} in ${decrypt(groupChat.name)}`
+                    ),
+                    date: new Date(),
+                });
+                await newNotification.save();
+
+                const receiverSocketId = getReceiverSocketId(userId.toString());
+
+                if (receiverSocketId) {
+                    // Convert the Mongoose document to a plain JavaScript object before emitting it
+                    const notificationToSend = {
+                        ...newNotification.toObject(),
+                        message: decrypt(newNotification.message),
+                    };
+                    io.to(receiverSocketId).emit(
+                        "newGroupNotification",
+                        notificationToSend
+                    );
+                }
+            }
+        }
+
         const decryptedMessage = {
             ...newMessage,
             senderName: decrypt(newMessage.senderName),
             content: decrypt(newMessage.content),
+            filePath: decrypt(newMessage.filePath),
+            groupName: decrypt(groupChat.name),
+            groupId: groupChat._id,
         };
 
-        io.emit("newGroupMessage", decryptedMessage);
+        groupChat.users.forEach((userId) => {
+            const socketId = getReceiverSocketId(userId.toString());
+            if (socketId) {
+                io.to(socketId).emit("newGroupMessage", decryptedMessage);
+            }
+        });
 
         res.status(200).json(groupChat);
     } catch (error) {
@@ -92,6 +137,7 @@ export const getGroupChatMessages = async (req, res) => {
                 senderName: decrypt(message.senderName),
                 content: decrypt(message.content),
                 timestamp: message.timestamp.toISOString(),
+                filePath: decrypt(message.filePath),
             };
         });
 
