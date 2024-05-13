@@ -39,14 +39,7 @@ const Message = ({ message }) => {
                 </video>
             );
         } else {
-            const fileName = message.filePath.split("/").pop();
-
-            // Extract the file extension
-            const fileExtension = fileName.split(".").pop();
-
-            // Prepend "FILE" to the file extension
-            const displayFileName = `FILE.${fileExtension}`;
-
+            const fileName = message.filePath.split("\\").pop();
             fileComponent = (
                 <a
                     href={fileUrl}
@@ -54,7 +47,7 @@ const Message = ({ message }) => {
                     target="_blank"
                     rel="noopener noreferrer"
                 >
-                    {displayFileName}
+                    {fileName}
                 </a>
             );
         }
